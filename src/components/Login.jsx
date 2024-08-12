@@ -37,6 +37,12 @@ const Login = () => {
               </div>
             </div>
 
+            <div>
+              <Link to={"/forgot-password"} className="link-primary">
+                Forgot password?
+              </Link>
+            </div>
+
             <div className="text-end">
               <button type="submit" class="btn btn-outline-primary mt-3">
                 Login

@@ -1,108 +1,216 @@
 import React from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import "../styles/Register.css";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import { userRegistrationValidationSchema } from "../validationSchema/userRegistrationValidationSchema";
+import PhoneField from "./PhoneField";
+import userServices from "../../services/userServices";
+
+const intialValues = {
+  firstname: "",
+  lastname: "",
+  email: "",
+  phone: "",
+  password: "",
+  confirmPassword: "",
+};
 
 const Register = () => {
-  const [value, setValue] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="container">
       <div className="row justify-content-center ">
         <div className="col-md-6">
-          <form className="border rounded m-4 p-4 bg-body-tertiary ">
-            <h3 className="text-center p-4">Register</h3>
+          <Formik
+            initialValues={intialValues}
+            validationSchema={userRegistrationValidationSchema}
+            onSubmit={async (values, { resetForm }) => {
+              setIsLoading(true);
+              try {
+                const res = await userServices.register(values);
 
-            <div className="mb-3">
-              <div className="form-floating mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="floatingInput"
-                  placeholder="name@example.com"
-                />
-                <label for="floatingInput">Firstname</label>
-              </div>
-            </div>
+                alert(res.data.message);
 
-            <div className="mb-3">
-              <div className="form-floating mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="floatingInput"
-                  placeholder="name@example.com"
-                />
-                <label for="floatingInput">Lastname</label>
-              </div>
-            </div>
+                setIsLoading(false);
+                resetForm();
+                navigate("/verify");
+              } catch (err) {
+                setIsLoading(false);
+                alert(err.response.data.message);
+              }
+            }}
+          >
+            {(formik) => (
+              <Form
+                onSubmit={formik.handleSubmit}
+                className="border rounded m-4 p-4 bg-body-tertiary "
+              >
+                <h3 className="text-center p-4">Register</h3>
 
-            <div className="row ">
-              <div className="col">
                 <div className="mb-3">
                   <div className="form-floating mb-3">
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="floatingInput"
-                      placeholder="name@example.com"
+                    <Field
+                      type="text"
+                      name="firstname"
+                      className={`form-control ${
+                        formik.touched.firstname
+                          ? formik.errors.firstname
+                            ? "is-invalid"
+                            : "is-valid"
+                          : ""
+                      }`}
+                      id="firstname"
+                      placeholder=""
                     />
-                    <label for="floatingInput">Email address</label>
+
+                    <label htmlFor="floatingInput">Firstname</label>
+
+                    <ErrorMessage
+                      name="firstname"
+                      className="text-danger"
+                      component="div"
+                    />
                   </div>
                 </div>
-              </div>
 
-              <div className="col-auto align-self-center ">
-                <button type="submit" className="btn btn-outline-primary">
-                  Verify
-                </button>
-              </div>
-            </div>
+                <div className="mb-3">
+                  <div className="form-floating mb-3">
+                    <Field
+                      type="text"
+                      className={`form-control ${
+                        formik.touched.lastname
+                          ? formik.errors.lastname
+                            ? "is-invalid"
+                            : "is-valid"
+                          : ""
+                      }`}
+                      name="lastname"
+                      id="lastname"
+                      placeholder=""
+                    />
+                    <label htmlFor="lastname">Lastname</label>
 
-            <div className="mb-3">
-              <div className="form-floating mb-3 ">
-                <PhoneInput
-                  className="form-control d-flex phone-input-border"
-                  international
-                  value={value}
-                  onChange={setValue}
-                  on
-                />
+                    <ErrorMessage
+                      name="lastname"
+                      className="text-danger"
+                      component="div"
+                    />
+                  </div>
+                </div>
 
-                <label htmlFor="floatingInput">Phone</label>
-              </div>
-            </div>
+                <div className="mb-3">
+                  <div className="form-floating mb-3">
+                    <Field
+                      type="email"
+                      className={`form-control ${
+                        formik.touched.email
+                          ? formik.errors.email
+                            ? "is-invalid"
+                            : "is-valid"
+                          : ""
+                      }`}
+                      name="email"
+                      id="email"
+                      placeholder=""
+                    />
+                    <label htmlFor="email">Email address</label>
+                    <ErrorMessage
+                      name="email"
+                      className="text-danger"
+                      component="div"
+                    />
+                  </div>
+                </div>
 
-            <div className="mb-3">
-              <div className="form-floating mb-3">
-                <input
-                  type="password"
-                  className="form-control"
-                  id="floatingInput"
-                  placeholder="name@example.com"
-                />
-                <label for="floatingInput">Password</label>
-              </div>
-            </div>
+                <div className="mb-3">
+                  <div className="form-floating mb-3 ">
+                    <Field
+                      name="phone"
+                      className={`form-control d-flex phone-input-border  ${
+                        formik.touched.phone
+                          ? formik.errors.phone
+                            ? "is-invalid"
+                            : "is-valid"
+                          : ""
+                      }`}
+                      component={PhoneField}
+                    />
+                  </div>
+                </div>
 
-            <div className="form-floating">
-              <input
-                type="password"
-                className="form-control"
-                id="floatingPassword"
-                placeholder="Password"
-              />
-              <label for="floatingPassword">Confirm password</label>
-            </div>
+                <div className="mb-3">
+                  <div className="form-floating mb-3">
+                    <Field
+                      type="password"
+                      className={`form-control ${
+                        formik.touched.password
+                          ? formik.errors.password
+                            ? "is-invalid"
+                            : "is-valid"
+                          : ""
+                      }`}
+                      id="password"
+                      name="password"
+                      placeholder=""
+                    />
+                    <label htmlFor="password">Password</label>
+                    <ErrorMessage
+                      name="password"
+                      className="text-danger"
+                      component="div"
+                    />
+                  </div>
+                </div>
 
-            <div className="text-end">
-              <button type="submit" class="btn btn-outline-primary mt-3">
-                Register
-              </button>
-            </div>
-          </form>
+                <div className="form-floating">
+                  <Field
+                    type="password"
+                    className={`form-control ${
+                      formik.touched.confirmPassword
+                        ? formik.errors.confirmPassword
+                          ? "is-invalid"
+                          : "is-valid"
+                        : ""
+                    }`}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder=""
+                  />
+                  <label htmlFor="confirmPassword">Confirm password</label>
+                  <ErrorMessage
+                    name="confirmPassword"
+                    className="text-danger"
+                    component="div"
+                  />
+                </div>
+
+                <div className="text-end">
+                  <button
+                    type="submit"
+                    class="btn btn-outline-primary rounded-pill mt-3"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          area-hidden="true"
+                        ></span>{" "}
+                        <span role="status">Loading...</span>
+                      </>
+                    ) : (
+                      "Register"
+                    )}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
 
