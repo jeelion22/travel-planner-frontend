@@ -6,6 +6,9 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import ForgotPassword from "./components/ForgotPassword";
 import VerifyEmail from "./components/VerifyEmail";
+import Dashboard from "./components/Dashboard";
+import PrivateRoute from "./components/PrivateRoute";
+import DashboardNavbar from "./components/DashboardNavbar";
 
 const App = () => {
   return (
@@ -18,6 +21,15 @@ const App = () => {
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="verify" element={<VerifyEmail />} />
         </Route>
+        <Route
+          path="dashboard"
+          element={
+            <PrivateRoute>
+              <DashboardNavbar />
+              <Dashboard />
+            </PrivateRoute>
+          }
+        ></Route>
       </Routes>
     </Router>
   );

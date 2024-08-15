@@ -1,7 +1,12 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
 
+import { useSelector } from "react-redux";
+import { selectUser } from "../features/users/usersSlice";
+
 const Navbar = () => {
+  const user = useSelector(selectUser);
+
   return (
     <div>
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -25,6 +30,7 @@ const Navbar = () => {
                   About
                 </Link>
               </li>
+
               <li class="nav-item">
                 <Link to={"/register"} class="nav-link">
                   Register

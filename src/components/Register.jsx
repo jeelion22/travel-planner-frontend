@@ -1,13 +1,21 @@
-import React from "react";
-import { useState } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import React, { useRef } from "react";
+
+import { Link, useNavigate } from "react-router-dom";
 import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
+
 import "../styles/Register.css";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { userRegistrationValidationSchema } from "../validationSchema/userRegistrationValidationSchema";
 import PhoneField from "./PhoneField";
-import userServices from "../../services/userServices";
+
+import VerifyEmail from "./VerifyEmail";
+import { Modal } from "bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  registerUser,
+  selectUserError,
+  selectUserStatus,
+} from "../features/users/usersSlice";
 
 const intialValues = {
   firstname: "",
@@ -19,8 +27,19 @@ const intialValues = {
 };
 
 const Register = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const modalRef = useRef(null);
+
+  const status = useSelector(selectUserStatus);
+  const error = useSelector(selectUserError);
+
+  const openModal = () => {
+    const modalElement = modalRef.current;
+    const modal = new Modal(modalElement);
+    modal.show();
+  };
 
   return (
     <div className="container">
@@ -29,20 +48,18 @@ const Register = () => {
           <Formik
             initialValues={intialValues}
             validationSchema={userRegistrationValidationSchema}
-            onSubmit={async (values, { resetForm }) => {
-              setIsLoading(true);
-              try {
-                const res = await userServices.register(values);
-
-                alert(res.data.message);
-
-                setIsLoading(false);
-                resetForm();
-                navigate("/verify");
-              } catch (err) {
-                setIsLoading(false);
-                alert(err.response.data.message);
-              }
+            onSubmit={(values, { resetForm }) => {
+              dispatch(registerUser(values))
+                .unwrap()
+                .then((res) => {
+                  alert(res.message);
+                  resetForm();
+                  // openModal();
+                  navigate("/login");
+                })
+                .catch((err) => {
+                  alert(err);
+                });
             }}
           >
             {(formik) => (
@@ -189,19 +206,23 @@ const Register = () => {
                   />
                 </div>
 
+                {/* {status === "failed" && (
+                  <div className="text-danger mt-2">{error}</div>
+                )} */}
+
                 <div className="text-end">
                   <button
                     type="submit"
                     class="btn btn-outline-primary rounded-pill mt-3"
-                    disabled={isLoading}
+                    disabled={status === "loading"}
                   >
-                    {isLoading ? (
+                    {status === "loading" ? (
                       <>
                         <span
                           className="spinner-border spinner-border-sm"
                           area-hidden="true"
                         ></span>{" "}
-                        <span role="status">Loading...</span>
+                        <span role="status">registering...</span>
                       </>
                     ) : (
                       "Register"
@@ -222,6 +243,36 @@ const Register = () => {
               <Link to={"/login"} className="link-primary">
                 Login
               </Link>{" "}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="modal fade"
+        id="staticBackdrop"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+        ref={modalRef}
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              {/* <h3 class="modal-title" id="staticBackdropLabel">
+                Verify Email Address
+              </h3> */}
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <VerifyEmail />
             </div>
           </div>
         </div>
