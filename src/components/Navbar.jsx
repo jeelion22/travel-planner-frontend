@@ -2,10 +2,11 @@ import React from "react";
 import { Link, Outlet } from "react-router-dom";
 
 import { useSelector } from "react-redux";
-import { selectUser } from "../features/users/usersSlice";
+import { selectUser, selectUserStatus } from "../features/users/usersSlice";
 
 const Navbar = () => {
   const user = useSelector(selectUser);
+  const status = useSelector(selectUserStatus);
 
   return (
     <div>
@@ -32,15 +33,19 @@ const Navbar = () => {
               </li>
 
               <li class="nav-item">
-                <Link to={"/register"} class="nav-link">
-                  Register
-                </Link>
+                {status === "succeeded" && (
+                  <Link class="nav-link">{`${user?.firstname} ${user?.lastname}`}</Link>
+                )}
               </li>
 
               <li class="nav-item">
-                <Link to={"/login"} class="nav-link">
-                  Login
-                </Link>
+                {status === "succeeded" ? (
+                  <Link class="nav-link">Logout</Link>
+                ) : (
+                  <Link to={"/login"} class="nav-link">
+                    Login
+                  </Link>
+                )}
               </li>
             </ul>
           </div>

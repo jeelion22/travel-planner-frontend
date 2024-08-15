@@ -46,9 +46,9 @@ const Login = () => {
   const handleLoginSubmit = async (credentials, { resetForm }) => {
     try {
       const res = await dispatch(userLogin(credentials)).unwrap();
-      if (res.token) {
+      if (res.token || user) {
         // Dispatch getUser to fetch user info
-        await dispatch(getUser()).unwrap();
+        // await dispatch(getUser()).unwrap();
         navigate("/dashboard");
       } else {
         openModal();

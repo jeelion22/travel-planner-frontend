@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import About from "./components/About";
@@ -9,8 +9,16 @@ import VerifyEmail from "./components/VerifyEmail";
 import Dashboard from "./components/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import DashboardNavbar from "./components/DashboardNavbar";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser, selectUser } from "./features/users/usersSlice";
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
   return (
     <Router>
       <Routes>
