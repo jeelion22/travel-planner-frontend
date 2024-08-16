@@ -1,12 +1,15 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Navigate, Outlet } from "react-router-dom";
 
 import { useSelector } from "react-redux";
 import { selectUser, selectUserStatus } from "../features/users/usersSlice";
 
-const Navbar = () => {
+const Navbar = ({ redirectTo = "/dashboard" }) => {
   const user = useSelector(selectUser);
-  const status = useSelector(selectUserStatus);
+
+  if (user) {
+    return <Navigate to={redirectTo} replace />;
+  }
 
   return (
     <div>
@@ -33,19 +36,15 @@ const Navbar = () => {
               </li>
 
               <li class="nav-item">
-                {status === "succeeded" && (
-                  <Link class="nav-link">{`${user?.firstname} ${user?.lastname}`}</Link>
-                )}
+                <Link to={"/register"} class="nav-link">
+                  Register
+                </Link>
               </li>
 
               <li class="nav-item">
-                {status === "succeeded" ? (
-                  <Link class="nav-link">Logout</Link>
-                ) : (
-                  <Link to={"/login"} class="nav-link">
-                    Login
-                  </Link>
-                )}
+                <Link to={"/login"} class="nav-link">
+                  Login
+                </Link>
               </li>
             </ul>
           </div>

@@ -17,7 +17,6 @@ export const verifyAccount = createAsyncThunk(
   "users/verifyAccount",
   async ({ userId, otp }, { rejectWithValue }) => {
     try {
-      console.log(otp);
       const response = await instance.post(`/users/verify/${userId}`, otp);
       return response.data;
     } catch (err) {
@@ -45,8 +44,19 @@ export const getUser = createAsyncThunk(
       const response = await protectedInstance.get("/users/me");
       return response.data;
     } catch (err) {
-      console.log(err)
       return rejectWithValue(err.response.data.message);
+    }
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  "users/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await protectedInstance.get("users/logout");
+      return "Logout successful";
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Logout failed");
     }
   }
 );
@@ -57,8 +67,13 @@ const userSlice = createSlice({
     user: null,
     status: "idle",
     error: null,
+    message: null,
   },
-  reducers: {},
+  reducers: {
+    clearMessage(state) {
+      state.message = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state, action) => {
@@ -108,12 +123,27 @@ const userSlice = createSlice({
       .addCase(getUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      .addCase(logoutUser.pending, (state, action) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = null;
+        state.message = action.payload;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
       });
   },
 });
 
 export default userSlice.reducer;
+export const { clearMessage } = userSlice.actions;
 
 export const selectUserStatus = (state) => state.users.status;
 export const selectUserError = (state) => state.users.error;
 export const selectUser = (state) => state.users.user;
+export const selectUserMessage = (state) => state.users.message;
