@@ -57,7 +57,7 @@ const App = () => {
         />
 
         <Route
-          path="trip"
+          path="trip/:tripId"
           element={
             <PrivateRoute>
               <DashboardNavbar />
