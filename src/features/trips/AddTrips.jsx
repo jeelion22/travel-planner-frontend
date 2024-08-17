@@ -6,13 +6,20 @@ import { useDispatch, useSelector } from "react-redux";
 import Budget from "./Budget";
 import { createTrip, selectTripStatus } from "./tripSlice";
 import { useNavigate } from "react-router-dom";
+import { currencyOptions } from "./Budget";
 
 const initialValues = {
   tripName: "",
   destination: "",
   startDate: "",
   endDate: "",
-  budget: { currency: "INR", amount: 0 },
+  budget: {
+    currency: "INR",
+    transportationBudget: 0,
+    accommodationBudget: 0,
+    foodBudget: 0,
+    otherBudget: 0,
+  },
 };
 
 const tripValidationSchema = Yup.object({
@@ -22,7 +29,16 @@ const tripValidationSchema = Yup.object({
   endDate: Yup.date().required("* Trip end date required"),
   budget: Yup.object({
     currency: Yup.string().required("* Currency type required"),
-    amount: Yup.number()
+    transportationBudget: Yup.number()
+      .min(0, "* Amount must be a non-negative number")
+      .required("* Amount required"),
+    accommodationBudget: Yup.number()
+      .min(0, "* Amount must be a non-negative number")
+      .required("* Amount required"),
+    foodBudget: Yup.number()
+      .min(0, "* Amount must be a non-negative number")
+      .required("* Amount required"),
+    otherBudget: Yup.number()
       .min(0, "* Amount must be a non-negative number")
       .required("* Amount required"),
   }),
@@ -36,7 +52,7 @@ const AddTrips = () => {
   return (
     <div className="container">
       <div className="row justify-content-center">
-        <div className="col-md-8">
+        <div className="col-md-10">
           <nav className="navbar bg-body-tertiary mt-4 rounded p-3">
             <form className="col d-flex" role="search">
               <input
@@ -63,6 +79,7 @@ const AddTrips = () => {
               alert("Trip added successfully!");
               resetForm();
               navigate("/dashboard");
+              navigate(0);
             })
             .catch((err) => alert(err))
             .finally(() => setSubmitting(false));
@@ -70,7 +87,7 @@ const AddTrips = () => {
       >
         {(formik) => (
           <div className="row justify-content-center">
-            <div className="col-md-8">
+            <div className="col-md-10">
               <Form
                 onSubmit={formik.handleSubmit}
                 className="rounded mt-3 p-4 bg-body-tertiary"
@@ -179,21 +196,126 @@ const AddTrips = () => {
                   </div>
                 </div>
 
-                <div className="row ">
+                <div className="row">
+                  <h6>Budget</h6>
+
                   <div className="col">
-                    <h6>Budget</h6>
                     <div className="form-floating mb-3">
                       <Field
-                        name="budget"
-                        component={Budget}
-                        className={`form-control ${
-                          formik.touched.budget
-                            ? formik.errors.budget
+                        as="select"
+                        name="budget.currency"
+                        id="budget.currency"
+                        className={`form-select ${
+                          formik.touched.budget?.currency
+                            ? formik.errors.budget?.currency
                               ? "is-invalid"
                               : "is-valid"
                             : ""
                         }`}
-                        placeholder=""
+                      >
+                        {currencyOptions.map((currency, index) => (
+                          <option key={index} value={currency}>
+                            {currency}
+                          </option>
+                        ))}
+                      </Field>
+                      <label htmlFor="budget.currency">Currency</label>
+                    </div>
+                  </div>
+                  <div className="col">
+                    <div className="form-floating mb-3">
+                      <Field
+                        type="number"
+                        name="budget.transportationBudget"
+                        className={`form-control  ${
+                          formik.touched.budget?.transportationBudget
+                            ? formik.errors.budget?.transportationBudget
+                              ? "is-invalid"
+                              : "is-valid"
+                            : ""
+                        }`}
+                        id="budget.transportationBudget"
+                        placeholder="budget.transportationBudget"
+                      />
+                      <label htmlFor="budget.transportationBudget">
+                        transportation
+                      </label>
+                      <ErrorMessage
+                        name="budget.transportationBudget"
+                        className="text-danger"
+                        component="div"
+                      />
+                    </div>
+                  </div>
+                  <div className="col">
+                    <div className="form-floating mb-3">
+                      <Field
+                        type="number"
+                        name="budget.accommodationBudget"
+                        className={`form-control ${
+                          formik.touched.budget?.accommodationBudget
+                            ? formik.errors.budget?.accommodationBudget
+                              ? "is-invalid"
+                              : "is-valid"
+                            : ""
+                        }`}
+                        id="accommodationBudget"
+                        placeholder="budget.accommodationBudget"
+                      />
+                      <label htmlFor="budget.accommodationBudget">
+                        Accommodation
+                      </label>
+                      <ErrorMessage
+                        name="budget.accommodationBudget"
+                        className="text-danger"
+                        component="div"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col">
+                    <div className="form-floating mb-3">
+                      <Field
+                        type="number"
+                        name="budget.foodBudget"
+                        className={`form-control ${
+                          formik.touched.budget?.foodBudget
+                            ? formik.errors.budget?.foodBudget
+                              ? "is-invalid"
+                              : "is-valid"
+                            : ""
+                        }`}
+                        id="budget.foodBudget"
+                        placeholder="budget.foodBudget"
+                      />
+                      <label htmlFor="budget.foodBudget">Food</label>
+                      <ErrorMessage
+                        name="budget.foodBudget"
+                        className="text-danger"
+                        component="div"
+                      />
+                    </div>
+                  </div>
+                  <div className="col">
+                    <div className="form-floating mb-3">
+                      <Field
+                        type="number"
+                        name="budget.otherBudget"
+                        className={`form-control ${
+                          formik.touched.budget?.otherBudget
+                            ? formik.errors.budget?.otherBudget
+                              ? "is-invalid"
+                              : "is-valid"
+                            : ""
+                        }`}
+                        id="budget.otherBudget"
+                        placeholder="budget.otherBudget"
+                      />
+                      <label htmlFor="budget.otherBudget">Other</label>
+                      <ErrorMessage
+                        name="budget.otherBudget"
+                        className="text-danger"
+                        component="div"
                       />
                     </div>
                   </div>
