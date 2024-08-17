@@ -29,7 +29,7 @@ export const getTripById = createAsyncThunk(
       const response = await protectedInstance.get(`/users/trips/${tripId}`);
       return response.data;
     } catch (error) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
