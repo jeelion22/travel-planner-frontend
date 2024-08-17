@@ -93,16 +93,7 @@ const Dashboard = () => {
                       type="button"
                       class="btn btn-outline-success btn-sm "
                       onClick={() => {
-                        dispatch(getTripById(trip._id))
-                          .unwrap()
-                          .then(() => navigate("/trip"))
-                          .catch(() => {
-                            if (error) {
-                              alert(error);
-                            } else {
-                              alert("An error occured");
-                            }
-                          });
+                        navigate(`/trip/${trip._id}`);
                       }}
                     >
                       Click More
