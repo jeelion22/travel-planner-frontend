@@ -84,7 +84,7 @@ const Dashboard = () => {
                     <h6>Budget:</h6>{" "}
                     <small class="text-body-secondary">
                       {getSymbolFromCurrency(`${trip.budget.currency}`)}{" "}
-                      {trip.budget.amount}
+                      {trip.budget.plannedAmount}
                     </small>
                   </p>
 
