@@ -6,6 +6,8 @@ const initialState = {
   trip: null,
   status: "idle",
   error: null,
+  updateBudgetStatus: "idle",
+  updateBudgetError: null,
 };
 
 // create trip
@@ -44,6 +46,22 @@ export const getAllTripsByUser = createAsyncThunk(
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data.message);
+    }
+  }
+);
+
+// update budget
+export const updateBudget = createAsyncThunk(
+  "trips/updateBudget",
+  async ({ tripId, budget }, { rejectWithValue }) => {
+    try {
+      const response = await protectedInstance.put(
+        `/users/trips/updateBudget/${tripId}`,
+        budget
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
@@ -92,6 +110,19 @@ const tripSlice = createSlice({
       .addCase(getTripById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      .addCase(updateBudget.pending, (state, action) => {
+        state.updateBudgetStatus = "loading";
+        state.updateBudgetError = null;
+      })
+      .addCase(updateBudget.fulfilled, (state, action) => {
+        state.updateBudgetStatus = "succeeded";
+        state.trip = action.payload;
+        state.updateBudgetError = null;
+      })
+      .addCase(updateBudget.rejected, (state, action) => {
+        state.updateBudgetStatus = "failed";
+        state.updateBudgetError = action.payload;
       });
   },
 });
@@ -102,3 +133,9 @@ export const selectTripStatus = (state) => state.trips.status;
 export const selectTrips = (state) => state.trips.trips;
 export const selectTripError = (state) => state.trips.error;
 export const selectTrip = (state) => state.trips.trip;
+
+// selectors for budget
+
+export const selectBudgetUpdateStatus = (state) =>
+  state.trips.updateBudgetStatus;
+export const selectUpdateError = (state) => state.trips.updateBudgetError;
