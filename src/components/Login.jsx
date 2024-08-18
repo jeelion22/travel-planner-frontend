@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link,  useNavigate } from "react-router-dom";
 import { Modal } from "bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getUser,
+  
   selectUser,
   selectUserError,
   selectUserStatus,
