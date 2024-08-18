@@ -12,6 +12,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import getSymbolFromCurrency from "currency-symbol-map";
 import BudgetModal from "./BudgetModal";
+import ToDoModal from "../toDos/ToDoModal";
+import { resetAddToDoState } from "../toDos/toDoSlice";
 
 const Trip = () => {
   const { tripId } = useParams();
@@ -268,7 +270,19 @@ const Trip = () => {
           <div class="col -sm-6 mb-3 mb-sm-0 h-100">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">Budget</h5>
+                <h5 class="card-title text-center">ToDos</h5>
+                <div className="text-end">
+                  {" "}
+                  <i
+                    type="button"
+                    class=" bi bi-journal-plus"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addToDoModal"
+                    onClick={()=>{
+                      dispatch(resetAddToDoState())
+                    }}
+                  ></i>
+                </div>
                 <p class="card-text">
                   With supporting text below as a natural lead-in to additional
                   content.
@@ -312,6 +326,7 @@ const Trip = () => {
           </div>
         </div>
         <BudgetModal />
+        <ToDoModal/>
       </div>
     );
   }
