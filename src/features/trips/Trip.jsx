@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
@@ -11,9 +11,11 @@ import {
 } from "./tripSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import getSymbolFromCurrency from "currency-symbol-map";
+import BudgetModal from "./BudgetModal";
 
 const Trip = () => {
   const { tripId } = useParams();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -70,7 +72,6 @@ const Trip = () => {
     if (tripId) {
       dispatch(getTripById(tripId))
         .unwrap()
-        .then((res) => console.log(res))
         .catch((err) => {
           if (error) {
             alert(error);
@@ -137,111 +138,122 @@ const Trip = () => {
               <div class="card-body">
                 <h5 class="card-title">Budget</h5>
 
-                <table class="table table-striped text-start">
-                  <thead>
-                    <tr>
-                      <th scope="col">Category</th>
-                      <th scope="col">Original Budget</th>
-                      <th scope="col">Actual Spending</th>
-                      <th scope="col">Budget Overrun</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Trans.</td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {trip.budget.transportationBudget}
-                      </td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {trip.budget.transportation}
-                      </td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {calculatebudgetOverRun(
-                          trip.budget.transportationBudget,
-                          trip.budget.transportation
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Accom.</td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {trip.budget.accommodationBudget}
-                      </td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {trip.budget.accommodation}
-                      </td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {calculatebudgetOverRun(
-                          trip.budget.accommodationBudget,
-                          trip.budget.accommodation
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Food</td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {trip.budget.foodBudget}
-                      </td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {trip.budget.food}
-                      </td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {calculatebudgetOverRun(
-                          trip.budget.foodBudget,
-                          trip.budget.food
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Other</td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {trip.budget.otherBudget}
-                      </td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {trip.budget.other}
-                      </td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {calculatebudgetOverRun(
-                          trip.budget.otherBudget,
-                          trip.budget.other
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <td>Total</td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {calculateBudget(Object.entries(trip.budget))}
-                      </td>
-                      <td>
-                        {getSymbolFromCurrency(trip.budget.currency)}
-                        {calculateSpent(Object.entries(trip.budget))}
-                      </td>
-                      <td>
-                        {getSymbolFromCurrency(`${trip.budget.currency}`)}
-                        {totalBudgetOverRun(
-                          Object.entries(trip.budget),
-                          Object.entries(trip.budget)
-                        )}
-                      </td>
-                      <td></td>
-                    </tr>
-                  </tfoot>
-                </table>
+                <div className="text-end">
+                  {" "}
+                  <i
+                    type="button"
+                    class=" bi bi-pencil-square"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editBudgetModal"
+                  ></i>
+                </div>
+                <div className="table-responsive">
+                  <table class="table  table-striped text-start">
+                    <thead>
+                      <tr>
+                        <th scope="col">Category</th>
+                        <th scope="col">Original Budget</th>
+                        <th scope="col">Actual Spending</th>
+                        <th scope="col">Budget Overrun</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Trans.</td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {trip.budget.transportationBudget}
+                        </td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {trip.budget.transportation}
+                        </td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {calculatebudgetOverRun(
+                            trip.budget.transportationBudget,
+                            trip.budget.transportation
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Accom.</td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {trip.budget.accommodationBudget}
+                        </td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {trip.budget.accommodation}
+                        </td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {calculatebudgetOverRun(
+                            trip.budget.accommodationBudget,
+                            trip.budget.accommodation
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Food</td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {trip.budget.foodBudget}
+                        </td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {trip.budget.food}
+                        </td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {calculatebudgetOverRun(
+                            trip.budget.foodBudget,
+                            trip.budget.food
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Other</td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {trip.budget.otherBudget}
+                        </td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {trip.budget.other}
+                        </td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {calculatebudgetOverRun(
+                            trip.budget.otherBudget,
+                            trip.budget.other
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td>Total</td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {calculateBudget(Object.entries(trip.budget))}
+                        </td>
+                        <td>
+                          {getSymbolFromCurrency(trip.budget.currency)}
+                          {calculateSpent(Object.entries(trip.budget))}
+                        </td>
+                        <td>
+                          {getSymbolFromCurrency(`${trip.budget.currency}`)}
+                          {totalBudgetOverRun(
+                            Object.entries(trip.budget),
+                            Object.entries(trip.budget)
+                          )}
+                        </td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary">
@@ -251,6 +263,7 @@ const Trip = () => {
             </div>
           </div>
         </div>
+
         <div className="row bg-body-tertiary mt-4 rounded p-4">
           <div class="col -sm-6 mb-3 mb-sm-0 h-100">
             <div class="card">
@@ -298,6 +311,7 @@ const Trip = () => {
             </div>
           </div>
         </div>
+        <BudgetModal />
       </div>
     );
   }
