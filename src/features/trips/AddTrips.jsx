@@ -3,10 +3,9 @@ import { Formik, Field, ErrorMessage, Form } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 
-import Budget from "./Budget";
 import { createTrip, selectTripStatus } from "./tripSlice";
 import { useNavigate } from "react-router-dom";
-import { currencyOptions } from "./Budget";
+import { currencyOptions } from "./currency";
 
 const initialValues = {
   tripName: "",
