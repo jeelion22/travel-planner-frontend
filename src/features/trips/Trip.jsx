@@ -13,7 +13,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import getSymbolFromCurrency from "currency-symbol-map";
 import BudgetModal from "./BudgetModal";
 import ToDoModal from "../toDos/ToDoModal";
-import { resetAddToDoState } from "../toDos/toDoSlice";
+import {
+  getAllToDos,
+  resetAddToDoState,
+  selectAllToDos,
+  selectAllToDosError,
+  selectAllToDosStatus,
+} from "../toDos/toDoSlice";
+import ToDos from "../toDos/ToDoStatusUpdate";
+import ToDoStatusUpdate from "../toDos/ToDoStatusUpdate";
 
 const Trip = () => {
   const { tripId } = useParams();
@@ -24,6 +32,9 @@ const Trip = () => {
   const status = useSelector(selectTripStatus);
   const trip = useSelector(selectTrip);
   const error = useSelector(selectTripError);
+  const allToDos = useSelector(selectAllToDos);
+  const allToDosStatus = useSelector(selectAllToDosStatus);
+  const allToDosError = useSelector(selectAllToDosError);
 
   const calculateBudget = (arr) => {
     const bud = arr.filter((item) =>
@@ -83,6 +94,10 @@ const Trip = () => {
     } else {
       navigate("/dashboard");
     }
+  }, [dispatch, tripId, navigate]);
+
+  useEffect(() => {
+    dispatch(getAllToDos(tripId));
   }, [dispatch, tripId, navigate]);
 
   if (status === "loading") {
@@ -278,18 +293,63 @@ const Trip = () => {
                     class=" bi bi-journal-plus"
                     data-bs-toggle="modal"
                     data-bs-target="#addToDoModal"
-                    onClick={()=>{
-                      dispatch(resetAddToDoState())
+                    onClick={() => {
+                      dispatch(resetAddToDoState());
                     }}
                   ></i>
                 </div>
-                <p class="card-text">
-                  With supporting text below as a natural lead-in to additional
-                  content.
-                </p>
-                <a href="#" class="btn btn-primary">
-                  Go somewhere
-                </a>
+
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">ToDo Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allToDos?.map((toDo, index) => (
+                        <>
+                          <tr key={toDo._id}>
+                            <th scope="row">{index + 1}</th>
+                            <td>{toDo.toDoName}</td>
+                            <td>
+                              {toDo.toDoStatus[0].toUpperCase() +
+                                toDo.toDoStatus.slice(1)}
+                              <i
+                                type="button"
+                                class="ms-3 bi bi-pencil-square text-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target={`#statusUpdateModal-${toDo._id}`}
+                              ></i>
+                            </td>
+                            <td>
+                              <span>
+                                <i
+                                  type="button"
+                                  class="bi bi-pencil-square text-primary"
+                                ></i>
+                              </span>
+                              <span>
+                                <i
+                                  type="button"
+                                  class="bi bi-trash3 ms-4 text-danger"
+                                ></i>
+                              </span>
+                            </td>
+                            <ToDoStatusUpdate
+                              toDoId={toDo._id.toString()}
+                              modalId={`statusUpdateModal-${toDo._id}`} 
+                              initialState = {toDo.toDoStatus}
+                            />
+                          </tr>
+                        </>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -326,7 +386,7 @@ const Trip = () => {
           </div>
         </div>
         <BudgetModal />
-        <ToDoModal/>
+        <ToDoModal />
       </div>
     );
   }

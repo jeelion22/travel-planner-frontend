@@ -2,7 +2,12 @@ import React, { useRef } from "react";
 import { Formik, Field, ErrorMessage, Form } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { addToDo, selectToDoError, selectToDoStatus } from "./toDoSlice";
+import {
+  addToDo,
+  getAllToDos,
+  selectToDoError,
+  selectToDoStatus,
+} from "./toDoSlice";
 import { selectTrip } from "../trips/tripSlice";
 
 const ToDoModal = () => {
@@ -61,6 +66,7 @@ const ToDoModal = () => {
                           type="button"
                           className="btn btn-outline-danger rounded-pill"
                           data-bs-dismiss="modal"
+                          onClick={() => dispatch(getAllToDos(tripId))}
                         >
                           Close
                         </button>
