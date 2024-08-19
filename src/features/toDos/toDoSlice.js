@@ -10,6 +10,10 @@ const initialState = {
   allToDosError: null,
   toDoUpdateStatus: "idle",
   toDoUpdateError: null,
+
+  // delete toDo
+  toDoDeleteStatus: "idle",
+  toDoDeleteError: null,
 };
 
 // add toDo
@@ -30,7 +34,10 @@ export const addToDo = createAsyncThunk(
 
 // get toDo
 
-export const getToDoById = createAsyncThunk("toDos/getToDoById", async ()=>{})
+export const getToDoById = createAsyncThunk(
+  "toDos/getToDoById",
+  async () => {}
+);
 
 // get all toDos
 export const getAllToDos = createAsyncThunk(
@@ -63,6 +70,21 @@ export const updateToDoStatus = createAsyncThunk(
   }
 );
 
+// delete toDo
+export const deleteToDo = createAsyncThunk(
+  "toDos/deleteToDo",
+  async (toDoId, { rejectWithValue }) => {
+    try {
+      const response = await protectedInstance.delete(
+        `/users/trips/toDos/${toDoId}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const toDoSlice = createSlice({
   name: "toDos",
   initialState,
@@ -78,6 +100,11 @@ const toDoSlice = createSlice({
     resetToDoStatusUpdate(state) {
       state.toDoUpdateStatus = "idle";
       state.toDoUpdateError = null;
+    },
+
+    resetToDoDelete(state) {
+      state.toDoDeleteStatus = "idle";
+      state.toDoDeleteError = null;
     },
   },
   extraReducers: (builder) => {
@@ -118,6 +145,19 @@ const toDoSlice = createSlice({
       .addCase(updateToDoStatus.rejected, (state, action) => {
         state.toDoUpdateStatus = "failed";
         state.toDoUpdateError = action.payload;
+      })
+      .addCase(deleteToDo.pending, (state) => {
+        state.toDoDeleteStatus = "loading";
+        state.toDoDeleteError = null;
+      })
+      .addCase(deleteToDo.fulfilled, (state) => {
+        state.toDoDeleteStatus = "succeeded";
+        state.toDoDeleteError = null;
+        state.toDo = null;
+      })
+      .addCase(deleteToDo.rejected, (state, action) => {
+        state.toDoDeleteStatus = "failed";
+        state.toDoDeleteError = action.payload;
       });
   },
 });
@@ -126,7 +166,7 @@ export default toDoSlice.reducer;
 
 // export actions
 
-export const { resetAddToDoState, resetAllToDosStatus, resetToDoStatusUpdate } =
+export const { resetAddToDoState, resetAllToDosStatus, resetToDoStatusUpdate, resetToDoDelete } =
   toDoSlice.actions;
 
 // selectors for add toDo
@@ -143,3 +183,6 @@ export const selectToDoUpdateError = (state) => state.toDos.toDoUpdateError;
 export const selectAllToDosStatus = (state) => state.toDos.allToDosStatus;
 export const selectAllToDos = (state) => state.toDos.allToDos;
 export const selectAllToDosError = (state) => state.toDos.allToDosError;
+
+export const selectToDoDeleteStatus = (state) => state.toDos.toDoDeleteStatus;
+export const selectToDoDeleteError = (state) => state.toDos.toDoDeleteError;
