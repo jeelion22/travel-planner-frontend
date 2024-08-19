@@ -14,6 +14,7 @@ import getSymbolFromCurrency from "currency-symbol-map";
 import BudgetModal from "./BudgetModal";
 import ToDoModal from "../toDos/ToDoModal";
 import {
+  deleteToDo,
   getAllToDos,
   resetAddToDoState,
   selectAllToDos,
@@ -336,13 +337,22 @@ const Trip = () => {
                                 <i
                                   type="button"
                                   class="bi bi-trash3 ms-4 text-danger"
+                                  onClick={() => {
+                                    dispatch(deleteToDo(toDo._id))
+                                      .unwrap()
+                                      .then(() => {
+                                        alert("ToDo deleted successfully!");
+                                        navigate(0);
+                                      })
+                                      .catch((err) => alert(err));
+                                  }}
                                 ></i>
                               </span>
                             </td>
                             <ToDoStatusUpdate
                               toDoId={toDo._id.toString()}
-                              modalId={`statusUpdateModal-${toDo._id}`} 
-                              initialState = {toDo.toDoStatus}
+                              modalId={`statusUpdateModal-${toDo._id}`}
+                              initialState={toDo.toDoStatus}
                             />
                           </tr>
                         </>
