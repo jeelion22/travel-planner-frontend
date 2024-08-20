@@ -3,7 +3,7 @@ import { protectedInstance } from "../../../services/instance";
 
 const initialState = {
   toDoStatus: "idle",
-  allToDos: null,
+  allToDos: [],
   toDo: null,
   toDoError: null,
   allToDosStatus: "idle",
@@ -14,6 +14,14 @@ const initialState = {
   // delete toDo
   toDoDeleteStatus: "idle",
   toDoDeleteError: null,
+
+  // get toDo
+  toDoGetStatus: "idle",
+  toDoGetError: null,
+
+  // edit toDo
+  toDoEditStatus: "idle",
+  toDoEditError: null,
 };
 
 // add toDo
@@ -36,7 +44,16 @@ export const addToDo = createAsyncThunk(
 
 export const getToDoById = createAsyncThunk(
   "toDos/getToDoById",
-  async () => {}
+  async (toDoId, { rejectWithValue }) => {
+    try {
+      const response = await protectedInstance.get(
+        `/users/trips/toDos/${toDoId}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
 );
 
 // get all toDos
@@ -45,7 +62,7 @@ export const getAllToDos = createAsyncThunk(
   async (tripId, { rejectWithValue }) => {
     try {
       const response = await protectedInstance.get(
-        `/users/trips/toDos/${tripId}`
+        `/users/trips/toDos/all/${tripId}`
       );
       return response.data;
     } catch (error) {
@@ -77,6 +94,22 @@ export const deleteToDo = createAsyncThunk(
     try {
       const response = await protectedInstance.delete(
         `/users/trips/toDos/${toDoId}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// edit toDo
+export const editToDo = createAsyncThunk(
+  "toDos/editToDo",
+  async ({ toDoId, toDo }) => {
+    try {
+      const response = await protectedInstance.put(
+        `/users/trips/toDos/edit/${toDoId}`,
+        toDo
       );
       return response.data;
     } catch (error) {
@@ -154,10 +187,39 @@ const toDoSlice = createSlice({
         state.toDoDeleteStatus = "succeeded";
         state.toDoDeleteError = null;
         state.toDo = null;
+        state.allToDos = state.allToDos.filter(
+          (toDo) => toDo._id !== action.meta.arg.toDoId
+        );
       })
       .addCase(deleteToDo.rejected, (state, action) => {
         state.toDoDeleteStatus = "failed";
         state.toDoDeleteError = action.payload;
+      })
+      .addCase(getToDoById.pending, (state) => {
+        state.toDoGetStatus = "loading";
+        state.toDoGetError = null;
+      })
+      .addCase(getToDoById.fulfilled, (state, action) => {
+        state.toDoGetStatus = "succeeded";
+        state.toDo = action.payload;
+      })
+      .addCase(getToDoById.rejected, (state, action) => {
+        state.toDoGetStatus = "failed";
+        state.toDoGetError = action.payload;
+      })
+      .addCase(editToDo.pending, (state) => {
+        state.toDoEditStatus = "loading";
+        state.toDoEditError = null;
+      })
+      .addCase(editToDo.fulfilled, (state, action) => {
+        state.toDoEditStatus = "succeeded";
+        state.toDo = action.payload;
+        state.toDoEditError = null;
+      })
+      .addCase(editToDo.rejected, (state, action) => {
+        state.toDoEditStatus = "failed";
+
+        state.toDoEditError = action.payload;
       });
   },
 });
@@ -166,8 +228,12 @@ export default toDoSlice.reducer;
 
 // export actions
 
-export const { resetAddToDoState, resetAllToDosStatus, resetToDoStatusUpdate, resetToDoDelete } =
-  toDoSlice.actions;
+export const {
+  resetAddToDoState,
+  resetAllToDosStatus,
+  resetToDoStatusUpdate,
+  resetToDoDelete,
+} = toDoSlice.actions;
 
 // selectors for add toDo
 
@@ -186,3 +252,11 @@ export const selectAllToDosError = (state) => state.toDos.allToDosError;
 
 export const selectToDoDeleteStatus = (state) => state.toDos.toDoDeleteStatus;
 export const selectToDoDeleteError = (state) => state.toDos.toDoDeleteError;
+
+// for get toDo
+export const selectToDoGetState = (state) => state.toDos.toDoGetStatus;
+export const selectToDoGetError = (state) => state.toDos.toDoGetError;
+
+// edit toDo
+export const selectToDoEditStatus = (state) => state.toDos.toDoEditStatus;
+export const selectToDOEditError = (state) => state.toDos.toDoEditError;

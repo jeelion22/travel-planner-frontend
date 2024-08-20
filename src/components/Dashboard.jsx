@@ -11,6 +11,7 @@ import {
   selectTrips,
   selectTripStatus,
 } from "../features/trips/tripSlice";
+import { getAllToDos } from "../features/toDos/toDoSlice";
 
 const Dashboard = () => {
   const trips = useSelector(selectTrips);
@@ -56,6 +57,20 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {status === "failed" && (
+        <div className="container">
+          <div
+            className="row justify-content-center align-items-center text-center"
+            style={{ height: "50vh" }}
+          >
+            <div className="col ">
+              <i class="bi bi-rocket fs-1"></i>
+              <h5>No trips</h5>
+            </div>
+          </div>
+        </div>
+      )}
+
       {status === "succeeded" ? (
         <div class="row row-cols-1 row-cols-md-3 g-4 mt-4">
           {trips?.map((trip) => (
@@ -93,6 +108,8 @@ const Dashboard = () => {
                       type="button"
                       class="btn btn-outline-success btn-sm "
                       onClick={() => {
+                        dispatch(getTripById(trip._id));
+                        dispatch(getAllToDos(trip._id));
                         navigate(`/trip/${trip._id}`);
                       }}
                     >

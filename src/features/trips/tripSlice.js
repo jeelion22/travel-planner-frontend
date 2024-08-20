@@ -38,7 +38,7 @@ export const getTripById = createAsyncThunk(
 
 // get all trips for the user
 export const getAllTripsByUser = createAsyncThunk(
-  "trips/getAllTrips",
+  "trips/getAllTripsByUser",
   async (_, { rejectWithValue }) => {
     try {
       const response = await protectedInstance.get("/users/allTrips");

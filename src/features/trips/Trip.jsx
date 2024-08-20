@@ -16,13 +16,15 @@ import ToDoModal from "../toDos/ToDoModal";
 import {
   deleteToDo,
   getAllToDos,
+  getToDoById,
   resetAddToDoState,
   selectAllToDos,
-  selectAllToDosError,
   selectAllToDosStatus,
+  selectToDoGetState,
 } from "../toDos/toDoSlice";
-import ToDos from "../toDos/ToDoStatusUpdate";
+
 import ToDoStatusUpdate from "../toDos/ToDoStatusUpdate";
+import EditToDo from "../toDos/EditToDo";
 
 const Trip = () => {
   const { tripId } = useParams();
@@ -34,8 +36,8 @@ const Trip = () => {
   const trip = useSelector(selectTrip);
   const error = useSelector(selectTripError);
   const allToDos = useSelector(selectAllToDos);
-  const allToDosStatus = useSelector(selectAllToDosStatus);
-  const allToDosError = useSelector(selectAllToDosError);
+
+  const allToDoStatus = useSelector(selectAllToDosStatus);
 
   const calculateBudget = (arr) => {
     const bud = arr.filter((item) =>
@@ -300,66 +302,87 @@ const Trip = () => {
                   ></i>
                 </div>
 
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">ToDo Name</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {allToDos?.map((toDo, index) => (
-                        <>
-                          <tr key={toDo._id}>
-                            <th scope="row">{index + 1}</th>
-                            <td>{toDo.toDoName}</td>
-                            <td>
-                              {toDo.toDoStatus[0].toUpperCase() +
-                                toDo.toDoStatus.slice(1)}
-                              <i
-                                type="button"
-                                class="ms-3 bi bi-pencil-square text-primary"
-                                data-bs-toggle="modal"
-                                data-bs-target={`#statusUpdateModal-${toDo._id}`}
-                              ></i>
-                            </td>
-                            <td>
-                              <span>
+                {allToDoStatus === "succeeded" ? (
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">ToDo Name</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allToDos?.map((toDo, index) => (
+                          <>
+                            <tr key={toDo._id}>
+                              <th scope="row">{index + 1}</th>
+                              <td>{toDo.toDoName}</td>
+                              <td>
+                                {toDo.toDoStatus[0].toUpperCase() +
+                                  toDo.toDoStatus.slice(1)}
                                 <i
                                   type="button"
-                                  class="bi bi-pencil-square text-primary"
+                                  class="ms-3 bi bi-pencil-square text-primary"
+                                  data-bs-toggle="modal"
+                                  data-bs-target={`#statusUpdateModal-${toDo._id}`}
                                 ></i>
-                              </span>
-                              <span>
-                                <i
-                                  type="button"
-                                  class="bi bi-trash3 ms-4 text-danger"
-                                  onClick={() => {
-                                    dispatch(deleteToDo(toDo._id))
-                                      .unwrap()
-                                      .then(() => {
-                                        alert("ToDo deleted successfully!");
-                                        navigate(0);
-                                      })
-                                      .catch((err) => alert(err));
-                                  }}
-                                ></i>
-                              </span>
-                            </td>
-                            <ToDoStatusUpdate
-                              toDoId={toDo._id.toString()}
-                              modalId={`statusUpdateModal-${toDo._id}`}
-                              initialState={toDo.toDoStatus}
-                            />
-                          </tr>
-                        </>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                              </td>
+                              <td>
+                                <span>
+                                  <i
+                                    type="button"
+                                    class="bi bi-pencil-square text-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target={`#toDoEditModal-${toDo._id}`}
+
+                                    // onClick={() => {
+                                    //   dispatch(getToDoById(toDo._id))
+                                    //     .unwrap()
+                                    //     .then((res) => {
+                                    //       alert(JSON.stringify(res, null, 2));
+                                    //     })
+                                    //     .catch((err) =>
+                                    //       alert(JSON.stringify(err, null, 2))
+                                    //     );
+                                    // }}
+                                  ></i>
+                                </span>
+                                <span>
+                                  <i
+                                    type="button"
+                                    class="bi bi-trash3 ms-4 text-danger"
+                                    onClick={() => {
+                                      dispatch(deleteToDo(toDo._id))
+                                        .unwrap()
+                                        .then(() => {
+                                          alert("ToDo deleted successfully!");
+                                          navigate(0);
+                                        })
+                                        .catch((err) => alert(err));
+                                    }}
+                                  ></i>
+                                </span>
+                              </td>
+                              <ToDoStatusUpdate
+                                toDoId={toDo._id.toString()}
+                                modalId={`statusUpdateModal-${toDo._id}`}
+                                initialState={toDo.toDoStatus}
+                              />
+                              <EditToDo toDoId={toDo._id} />
+                            </tr>
+                          </>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className=" text-center">
+                    <i class="bi bi-journal-x fs-1"></i>
+                    <p>No ToDos found!</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
