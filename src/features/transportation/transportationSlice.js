@@ -17,6 +17,10 @@ export const getFlightsSuggestions = createAsyncThunk(
   "transportations/getFlightsSuggestions",
   async ({ source, destination }, { rejectWithValue }) => {
     try {
+
+        if (!source) {
+            source = "_"
+        }
       const response = await protectedInstance.get(
         `/users/trips/flights/search?source=${source}&destination=${destination}`
       );

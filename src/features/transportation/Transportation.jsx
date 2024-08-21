@@ -9,6 +9,7 @@ import {
 } from "./transportationSlice";
 import getSymbolFromCurrency from "currency-symbol-map";
 import ReactPaginate from "react-paginate";
+import FlightBookingModal from "./FlightBookingModal";
 
 const Transportation = () => {
   const flightsSuggestionsState = useSelector(selectFlightsSuggestionState);
@@ -19,7 +20,7 @@ const Transportation = () => {
   const [currentPage, setCurrentPage] = useState(0);
 
   const itemsPerPage = 5;
-  const paginatedFlights = suggestedFlights.slice(
+  const paginatedFlights = suggestedFlights?.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
@@ -71,7 +72,7 @@ const Transportation = () => {
 
       {flightsSuggestionsState === "succeeded" && (
         <div className="table-responsive">
-          <table class="table table-striped table-hover align-middle">
+          <table class="table table-striped table-hover align-middle ">
             <caption className="caption-top">Available Flights</caption>
             <thead>
               <tr>
@@ -110,8 +111,16 @@ const Transportation = () => {
                     {flight.cost}
                   </td>
                   <td>
-                    <button className="btn btn-primary btn-sm">Book</button>
+                    <button
+                      className="btn btn-primary btn-sm"
+                      data-bs-toggle="modal"
+                      data-bs-target={`#${flight._id}`}
+                    >
+                      Book
+                    </button>
                   </td>
+
+               
                 </tr>
               ))}
             </tbody>
