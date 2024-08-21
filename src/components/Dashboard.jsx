@@ -118,9 +118,7 @@ const Dashboard = () => {
                           })
                         ).catch((err) => alert(err));
 
-                        setTimeout(() => {
-                          navigate(`/trip/${trip._id}`);
-                        }, 500);
+                        navigate(`/trip/${trip._id}`);
                       }}
                     >
                       Click More
