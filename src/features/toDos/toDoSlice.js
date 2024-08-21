@@ -105,7 +105,7 @@ export const deleteToDo = createAsyncThunk(
 // edit toDo
 export const editToDo = createAsyncThunk(
   "toDos/editToDo",
-  async ({ toDoId, toDo }) => {
+  async ( {toDoId, toDo} , {rejectWithValue}) => {
     try {
       const response = await protectedInstance.put(
         `/users/trips/toDos/edit/${toDoId}`,
@@ -139,6 +139,10 @@ const toDoSlice = createSlice({
       state.toDoDeleteStatus = "idle";
       state.toDoDeleteError = null;
     },
+    resetToDoEdit(state){
+      state.toDoEditStatus = "idle"
+      state.toDoEditError = null
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -187,9 +191,6 @@ const toDoSlice = createSlice({
         state.toDoDeleteStatus = "succeeded";
         state.toDoDeleteError = null;
         state.toDo = null;
-        state.allToDos = state.allToDos.filter(
-          (toDo) => toDo._id !== action.meta.arg.toDoId
-        );
       })
       .addCase(deleteToDo.rejected, (state, action) => {
         state.toDoDeleteStatus = "failed";
@@ -218,7 +219,6 @@ const toDoSlice = createSlice({
       })
       .addCase(editToDo.rejected, (state, action) => {
         state.toDoEditStatus = "failed";
-
         state.toDoEditError = action.payload;
       });
   },
@@ -233,6 +233,7 @@ export const {
   resetAllToDosStatus,
   resetToDoStatusUpdate,
   resetToDoDelete,
+  resetToDoEdit
 } = toDoSlice.actions;
 
 // selectors for add toDo

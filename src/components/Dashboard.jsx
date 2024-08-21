@@ -12,6 +12,7 @@ import {
   selectTripStatus,
 } from "../features/trips/tripSlice";
 import { getAllToDos } from "../features/toDos/toDoSlice";
+import { getFlightsSuggestions } from "../features/transportation/transportationSlice";
 
 const Dashboard = () => {
   const trips = useSelector(selectTrips);
@@ -110,6 +111,13 @@ const Dashboard = () => {
                       onClick={() => {
                         dispatch(getTripById(trip._id));
                         dispatch(getAllToDos(trip._id));
+
+                        dispatch(
+                          getFlightsSuggestions({
+                            destination: trip.destination,
+                          })
+                        ).catch((err) => alert(err));
+
                         navigate(`/trip/${trip._id}`);
                       }}
                     >

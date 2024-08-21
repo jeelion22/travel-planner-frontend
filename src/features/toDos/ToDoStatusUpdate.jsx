@@ -129,11 +129,9 @@ const ToDoStatusUpdate = ({ toDoId, modalId, initialState }) => {
                                       </option>
                                     ))}
                                   </Field>
-                                  <label htmlFor="toDoDescription">
-                                    Status status
-                                  </label>
+                                  <label htmlFor="toDoStatus">Status</label>
                                   <ErrorMessage
-                                    name="toDoDescription"
+                                    name="toDoStatus"
                                     className="text-danger"
                                     component="div"
                                   />

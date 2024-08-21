@@ -1,15 +1,26 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { selectToDo, selectToDoEditStatus } from "./toDoSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  editToDo,
+  getToDoById,
+  selectToDo,
+  selectToDoEditStatus,
+  resetToDoEdit,
+  getAllToDos,
+} from "./toDoSlice";
 import { Formik, Field, ErrorMessage, Form } from "formik";
 import * as Yup from "yup";
+import { useEffect } from "react";
+import { selectTrip } from "../trips/tripSlice";
 
-const EditToDo = ({toDoId}) => {
+const EditToDo = ({ toDoId }) => {
   const toDo = useSelector(selectToDo);
-  const editToDOStatus = useSelector(selectToDoEditStatus)
-  
+  const editToDOStatus = useSelector(selectToDoEditStatus);
+  const tripId = useSelector(selectTrip)._id;
 
-  const initialValues = { ...toDo };
+  const dispatch = useDispatch();
+
+  const initialValues = toDo;
 
   const toDoEditValidationSchema = Yup.object({
     toDoName: Yup.string().required("* ToDo name required"),
@@ -18,6 +29,10 @@ const EditToDo = ({toDoId}) => {
       .oneOf(["pending", "in-progress", "completed"])
       .required("* ToDo status required"),
   });
+
+  useEffect(() => {
+    dispatch(getToDoById(toDoId)).catch((err) => alert(err));
+  }, [dispatch]);
 
   return (
     <div className="container">
@@ -39,7 +54,7 @@ const EditToDo = ({toDoId}) => {
                     className="modal-title fs-5"
                     id={`toDoEditModal-${toDoId}`}
                   >
-                    Add ToDo
+                    Update ToDo
                   </h1>
                   <button
                     type="button"
@@ -56,12 +71,16 @@ const EditToDo = ({toDoId}) => {
                           <i class="bi bi-check-circle-fill fs-1"></i>
                           <h6>Success</h6>
                         </div>
-
                         <button
                           type="button"
                           className="btn btn-outline-danger rounded-pill"
                           data-bs-dismiss="modal"
-                          onClick={() => dispatch(getAllToDos(tripId))}
+                          onClick={() => {
+                            dispatch(getAllToDos(tripId));
+                            console.log("clicked");
+
+                            dispatch(resetToDoEdit());
+                          }}
                         >
                           Close
                         </button>
@@ -72,12 +91,12 @@ const EditToDo = ({toDoId}) => {
                       initialValues={initialValues}
                       validationSchema={toDoEditValidationSchema}
                       onSubmit={(values, { setSubmitting, resetForm }) => {
-                        dispatch(addToDo({ tripId, toDo: values }))
+                        dispatch(editToDo({ toDoId, toDo: values }))
                           .unwrap()
                           .then(() => {
                             resetForm();
                           })
-                          .catch((err) => alert(err))
+                          .catch((err) => alert(JSON.stringify(err, null, 2)))
                           .finally(() => setSubmitting(false));
                       }}
                     >
@@ -88,6 +107,7 @@ const EditToDo = ({toDoId}) => {
                         >
                           <div className="container">
                             <h3 className="text-center mb-4">ToDo</h3>
+
                             <div className="row">
                               <div className="col">
                                 <div className="form-floating mb-3">
@@ -113,6 +133,7 @@ const EditToDo = ({toDoId}) => {
                                 </div>
                               </div>
                             </div>
+
                             <div className="row">
                               <div className="col">
                                 <div className="form-floating mb-3">
@@ -140,6 +161,46 @@ const EditToDo = ({toDoId}) => {
                                 </div>
                               </div>
                             </div>
+
+                            <div className="row">
+                              <div className="col">
+                                <div className="form-floating mb-3">
+                                  <Field
+                                    as="select"
+                                    name="toDoStatus"
+                                    className={`form-select ${
+                                      formik.touched.toDoStatus
+                                        ? formik.errors.toDoStatus
+                                          ? "is-invalid"
+                                          : "is-valid"
+                                        : ""
+                                    }`}
+                                    id="toDoStatus"
+                                    placeholder="Select status"
+                                  >
+                                    {[
+                                      "pending",
+                                      "in-progress",
+                                      "completed",
+                                    ].map((status, index) => (
+                                      <option key={index} value={status}>
+                                        {status[0].toUpperCase() +
+                                          status.slice(1)}
+                                      </option>
+                                    ))}
+                                  </Field>
+                                  <label htmlFor="toDoStatus">
+                                    Status status
+                                  </label>
+                                  <ErrorMessage
+                                    name="toDoStatus"
+                                    className="text-danger"
+                                    component="div"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
                             <div className="modal-footer justify-content-center">
                               <div>
                                 <button

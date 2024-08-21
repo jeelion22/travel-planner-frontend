@@ -66,7 +66,6 @@ const ToDoModal = () => {
                           type="button"
                           className="btn btn-outline-danger rounded-pill"
                           data-bs-dismiss="modal"
-                          onClick={() => dispatch(getAllToDos(tripId))}
                         >
                           Close
                         </button>
@@ -84,6 +83,10 @@ const ToDoModal = () => {
                           })
                           .catch((err) => alert(err))
                           .finally(() => setSubmitting(false));
+
+                        dispatch(getAllToDos(tripId)).catch((err) =>
+                          alert(err)
+                        );
                       }}
                     >
                       {(formik) => (

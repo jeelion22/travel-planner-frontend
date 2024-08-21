@@ -25,6 +25,8 @@ import {
 
 import ToDoStatusUpdate from "../toDos/ToDoStatusUpdate";
 import EditToDo from "../toDos/EditToDo";
+import ToDoDescriptionModal from "../toDos/ToDoDescriptionModal";
+import Transportation from "../transportation/Transportation";
 
 const Trip = () => {
   const { tripId } = useParams();
@@ -289,11 +291,11 @@ const Trip = () => {
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title text-center">ToDos</h5>
-                <div className="text-end">
+                <div className="">
                   {" "}
                   <i
                     type="button"
-                    class=" bi bi-journal-plus"
+                    class=" bi bi-journal-plus fs-3"
                     data-bs-toggle="modal"
                     data-bs-target="#addToDoModal"
                     onClick={() => {
@@ -301,6 +303,13 @@ const Trip = () => {
                     }}
                   ></i>
                 </div>
+
+                {allToDoStatus === "loading" && (
+                  <div className=" text-center">
+                    <i class="bi bi-cloud-arrow-down"></i>
+                    <p>No ToDos found!</p>
+                  </div>
+                )}
 
                 {allToDoStatus === "succeeded" ? (
                   <div class="table-responsive">
@@ -318,7 +327,16 @@ const Trip = () => {
                           <>
                             <tr key={toDo._id}>
                               <th scope="row">{index + 1}</th>
-                              <td>{toDo.toDoName}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  class="btn btn-primary"
+                                  data-bs-toggle="modal"
+                                  data-bs-target={`#toDoDescriptionModal-${toDo._id}`}
+                                >
+                                  {toDo.toDoName}
+                                </button>
+                              </td>
                               <td>
                                 {toDo.toDoStatus[0].toUpperCase() +
                                   toDo.toDoStatus.slice(1)}
@@ -336,17 +354,12 @@ const Trip = () => {
                                     class="bi bi-pencil-square text-primary"
                                     data-bs-toggle="modal"
                                     data-bs-target={`#toDoEditModal-${toDo._id}`}
+                                    onClick={() => {
+                                      dispatch(getToDoById(toDo._id))
+                                        .unwrap()
 
-                                    // onClick={() => {
-                                    //   dispatch(getToDoById(toDo._id))
-                                    //     .unwrap()
-                                    //     .then((res) => {
-                                    //       alert(JSON.stringify(res, null, 2));
-                                    //     })
-                                    //     .catch((err) =>
-                                    //       alert(JSON.stringify(err, null, 2))
-                                    //     );
-                                    // }}
+                                        .catch((err) => alert(err));
+                                    }}
                                   ></i>
                                 </span>
                                 <span>
@@ -365,12 +378,14 @@ const Trip = () => {
                                   ></i>
                                 </span>
                               </td>
+
                               <ToDoStatusUpdate
                                 toDoId={toDo._id.toString()}
                                 modalId={`statusUpdateModal-${toDo._id}`}
                                 initialState={toDo.toDoStatus}
                               />
                               <EditToDo toDoId={toDo._id} />
+                              <ToDoDescriptionModal toDoId={toDo._id} />
                             </tr>
                           </>
                         ))}
@@ -389,31 +404,11 @@ const Trip = () => {
         </div>
 
         <div className="row bg-body-tertiary mt-4 rounded p-4">
-          <div class="col-sm-6 mb-3 mb-sm-0 h-100">
+          <div class=" col  mb-3 mb-sm-0 h-100">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">
-                  With supporting text below as a natural lead-in to additional
-                  content.
-                </p>
-                <a href="#" class="btn btn-primary">
-                  Go somewhere
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 h-100">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">
-                  With supporting text below as a natural lead-in to additional
-                  content.
-                </p>
-                <a href="#" class="btn btn-primary">
-                  Go somewhere
-                </a>
+                <h5 class="card-title text-center">Transportation</h5>
+                <Transportation />
               </div>
             </div>
           </div>
