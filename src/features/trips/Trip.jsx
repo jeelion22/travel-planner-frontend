@@ -28,6 +28,8 @@ import EditToDo from "../toDos/EditToDo";
 import ToDoDescriptionModal from "../toDos/ToDoDescriptionModal";
 import Transportation from "../transportation/Transportation";
 
+import TravelBooking from "../transportation/TravelBooking";
+
 const Trip = () => {
   const { tripId } = useParams();
 
@@ -129,7 +131,8 @@ const Trip = () => {
     return (
       <div className="container">
         <div className="row bg-body-tertiary mt-4 rounded p-4 text-center">
-          <div class="col-md-4 col-sm-6 mb-3 mb-sm-0">
+          {/* card for little dashboard */}
+          <div class="col-md-6 col-sm-6 mb-3 mb-sm-0">
             <div class="card h-100">
               <div class="card-body">
                 <h5 class="card-title">{trip.tripName}</h5>
@@ -147,6 +150,7 @@ const Trip = () => {
                     day: "numeric",
                   })}
                 </p>
+                <TravelBooking tripId={tripId} />
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary">
@@ -155,249 +159,263 @@ const Trip = () => {
               </div>
             </div>
           </div>
-          <div class="col-md-8 col-sm-6 ">
-            <div class="card h-100">
-              <div class="card-body">
-                <h5 class="card-title">Budget</h5>
 
-                <div className="text-end">
-                  {" "}
-                  <i
-                    type="button"
-                    class=" bi bi-pencil-square"
-                    data-bs-toggle="modal"
-                    data-bs-target="#editBudgetModal"
-                  ></i>
-                </div>
-                <div className="table-responsive">
-                  <table class="table  table-striped text-start">
-                    <thead>
-                      <tr>
-                        <th scope="col">Category</th>
-                        <th scope="col">Original Budget</th>
-                        <th scope="col">Actual Spending</th>
-                        <th scope="col">Budget Overrun</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Trans.</td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {trip.budget.transportationBudget}
-                        </td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {trip.budget.transportation}
-                        </td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {calculatebudgetOverRun(
-                            trip.budget.transportationBudget,
-                            trip.budget.transportation
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Accom.</td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {trip.budget.accommodationBudget}
-                        </td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {trip.budget.accommodation}
-                        </td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {calculatebudgetOverRun(
-                            trip.budget.accommodationBudget,
-                            trip.budget.accommodation
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Food</td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {trip.budget.foodBudget}
-                        </td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {trip.budget.food}
-                        </td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {calculatebudgetOverRun(
-                            trip.budget.foodBudget,
-                            trip.budget.food
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Other</td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {trip.budget.otherBudget}
-                        </td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {trip.budget.other}
-                        </td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {calculatebudgetOverRun(
-                            trip.budget.otherBudget,
-                            trip.budget.other
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <td>Total</td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {calculateBudget(Object.entries(trip.budget))}
-                        </td>
-                        <td>
-                          {getSymbolFromCurrency(trip.budget.currency)}
-                          {calculateSpent(Object.entries(trip.budget))}
-                        </td>
-                        <td>
-                          {getSymbolFromCurrency(`${trip.budget.currency}`)}
-                          {totalBudgetOverRun(
-                            Object.entries(trip.budget),
-                            Object.entries(trip.budget)
-                          )}
-                        </td>
-                        <td></td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary">
-                  Last updated 3 mins ago
-                </small>
-              </div>
-            </div>
-          </div>
-        </div>
+          {/* card for budegt */}
+          <div class="col-md-6 col-sm-6 ">
+            <div className="row">
+              {/* card for budegt */}
+              <div class="col-md-12 col-sm-6 ">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title">Budget</h5>
 
-        <div className="row bg-body-tertiary mt-4 rounded p-4">
-          <div class="col -sm-6 mb-3 mb-sm-0 h-100">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title text-center">ToDos</h5>
-                <div className="">
-                  {" "}
-                  <i
-                    type="button"
-                    class=" bi bi-journal-plus fs-3"
-                    data-bs-toggle="modal"
-                    data-bs-target="#addToDoModal"
-                    onClick={() => {
-                      dispatch(resetAddToDoState());
-                    }}
-                  ></i>
-                </div>
-
-                {allToDoStatus === "loading" && (
-                  <div className=" text-center">
-                    <i class="bi bi-cloud-arrow-down"></i>
-                    <p>No ToDos found!</p>
+                    <div className="text-end">
+                      {" "}
+                      <i
+                        type="button"
+                        class=" bi bi-pencil-square"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editBudgetModal"
+                      ></i>
+                    </div>
+                    <div className="table-responsive">
+                      <table class="table  table-striped text-start">
+                        <thead>
+                          <tr>
+                            <th scope="col">Category</th>
+                            <th scope="col">Original Budget</th>
+                            <th scope="col">Actual Spending</th>
+                            <th scope="col">Budget Overrun</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Trans.</td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {trip.budget.transportationBudget}
+                            </td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {trip.budget.transportation}
+                            </td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {calculatebudgetOverRun(
+                                trip.budget.transportationBudget,
+                                trip.budget.transportation
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Accom.</td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {trip.budget.accommodationBudget}
+                            </td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {trip.budget.accommodation}
+                            </td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {calculatebudgetOverRun(
+                                trip.budget.accommodationBudget,
+                                trip.budget.accommodation
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Food</td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {trip.budget.foodBudget}
+                            </td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {trip.budget.food}
+                            </td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {calculatebudgetOverRun(
+                                trip.budget.foodBudget,
+                                trip.budget.food
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Other</td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {trip.budget.otherBudget}
+                            </td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {trip.budget.other}
+                            </td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {calculatebudgetOverRun(
+                                trip.budget.otherBudget,
+                                trip.budget.other
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td>Total</td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {calculateBudget(Object.entries(trip.budget))}
+                            </td>
+                            <td>
+                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {calculateSpent(Object.entries(trip.budget))}
+                            </td>
+                            <td>
+                              {getSymbolFromCurrency(`${trip.budget.currency}`)}
+                              {totalBudgetOverRun(
+                                Object.entries(trip.budget),
+                                Object.entries(trip.budget)
+                              )}
+                            </td>
+                            <td></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
                   </div>
-                )}
+                  <div class="card-footer">
+                    <small class="text-body-secondary">
+                      Last updated 3 mins ago
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-                {allToDoStatus === "succeeded" ? (
-                  <div class="table-responsive">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">ToDo Name</th>
-                          <th scope="col">Status</th>
-                          <th scope="col">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {allToDos?.map((toDo, index) => (
-                          <>
-                            <tr key={toDo._id}>
-                              <th scope="row">{index + 1}</th>
-                              <td>
-                                <button
-                                  type="button"
-                                  class="btn btn-primary"
-                                  data-bs-toggle="modal"
-                                  data-bs-target={`#toDoDescriptionModal-${toDo._id}`}
-                                >
-                                  {toDo.toDoName}
-                                </button>
-                              </td>
-                              <td>
-                                {toDo.toDoStatus[0].toUpperCase() +
-                                  toDo.toDoStatus.slice(1)}
-                                <i
-                                  type="button"
-                                  class="ms-3 bi bi-pencil-square text-primary"
-                                  data-bs-toggle="modal"
-                                  data-bs-target={`#statusUpdateModal-${toDo._id}`}
-                                ></i>
-                              </td>
-                              <td>
-                                <span>
-                                  <i
-                                    type="button"
-                                    class="bi bi-pencil-square text-primary"
-                                    data-bs-toggle="modal"
-                                    data-bs-target={`#toDoEditModal-${toDo._id}`}
-                                    onClick={() => {
-                                      dispatch(getToDoById(toDo._id))
-                                        .unwrap()
+            <div className="row mt-4">
+              <div class="col-md-12 -sm-6 mb-3 mb-sm-0 h-100">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title text-center">ToDos</h5>
+                    <div className="text-end">
+                      {" "}
+                      <i
+                        type="button"
+                        class=" bi bi-journal-plus fs-3"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addToDoModal"
+                        onClick={() => {
+                          dispatch(resetAddToDoState());
+                        }}
+                      ></i>
+                    </div>
 
-                                        .catch((err) => alert(err));
-                                    }}
-                                  ></i>
-                                </span>
-                                <span>
-                                  <i
-                                    type="button"
-                                    class="bi bi-trash3 ms-4 text-danger"
-                                    onClick={() => {
-                                      dispatch(deleteToDo(toDo._id))
-                                        .unwrap()
-                                        .then(() => {
-                                          alert("ToDo deleted successfully!");
-                                          navigate(0);
-                                        })
-                                        .catch((err) => alert(err));
-                                    }}
-                                  ></i>
-                                </span>
-                              </td>
+                    {allToDoStatus === "loading" && (
+                      <div className=" text-center">
+                        <i class="bi bi-cloud-arrow-down"></i>
+                        <p>No ToDos found!</p>
+                      </div>
+                    )}
 
-                              <ToDoStatusUpdate
-                                toDoId={toDo._id.toString()}
-                                modalId={`statusUpdateModal-${toDo._id}`}
-                                initialState={toDo.toDoStatus}
-                              />
-                              <EditToDo toDoId={toDo._id} />
-                              <ToDoDescriptionModal toDoId={toDo._id} />
+                    {allToDoStatus === "succeeded" ? (
+                      <div class="table-responsive">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">ToDo Name</th>
+                              <th scope="col">Status</th>
+                              <th scope="col">Action</th>
                             </tr>
-                          </>
-                        ))}
-                      </tbody>
-                    </table>
+                          </thead>
+                          <tbody>
+                            {allToDos?.map((toDo, index) => (
+                              <>
+                                <tr key={toDo._id}>
+                                  <th scope="row">{index + 1}</th>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      class="btn btn-primary"
+                                      data-bs-toggle="modal"
+                                      data-bs-target={`#toDoDescriptionModal-${toDo._id}`}
+                                    >
+                                      {toDo.toDoName}
+                                    </button>
+                                  </td>
+                                  <td>
+                                    {toDo.toDoStatus[0].toUpperCase() +
+                                      toDo.toDoStatus.slice(1)}
+                                    <i
+                                      type="button"
+                                      class="ms-3 bi bi-pencil-square text-primary"
+                                      data-bs-toggle="modal"
+                                      data-bs-target={`#statusUpdateModal-${toDo._id}`}
+                                    ></i>
+                                  </td>
+                                  <td>
+                                    <span>
+                                      <i
+                                        type="button"
+                                        class="bi bi-pencil-square text-primary"
+                                        data-bs-toggle="modal"
+                                        data-bs-target={`#toDoEditModal-${toDo._id}`}
+                                        onClick={() => {
+                                          dispatch(getToDoById(toDo._id))
+                                            .unwrap()
+
+                                            .catch((err) => alert(err));
+                                        }}
+                                      ></i>
+                                    </span>
+                                    <span>
+                                      <i
+                                        type="button"
+                                        class="bi bi-trash3 ms-4 text-danger"
+                                        onClick={() => {
+                                          dispatch(deleteToDo(toDo._id))
+                                            .unwrap()
+                                            .then(() => {
+                                              alert(
+                                                "ToDo deleted successfully!"
+                                              );
+                                              navigate(0);
+                                            })
+                                            .catch((err) => alert(err));
+                                        }}
+                                      ></i>
+                                    </span>
+                                  </td>
+
+                                  <ToDoStatusUpdate
+                                    toDoId={toDo._id.toString()}
+                                    modalId={`statusUpdateModal-${toDo._id}`}
+                                    initialState={toDo.toDoStatus}
+                                  />
+                                  <EditToDo toDoId={toDo._id} />
+                                  <ToDoDescriptionModal toDoId={toDo._id} />
+                                </tr>
+                              </>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className=" text-center">
+                        <i class="bi bi-journal-x fs-1"></i>
+                        <p>No ToDos found!</p>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className=" text-center">
-                    <i class="bi bi-journal-x fs-1"></i>
-                    <p>No ToDos found!</p>
+                  <div class="card-footer">
+                    <small class="text-body-secondary">
+                      Last updated 3 mins ago
+                    </small>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
