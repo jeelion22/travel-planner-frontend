@@ -18,6 +18,11 @@ const initialState = {
   trainsSuggestionState: "idle",
   suggestedTrains: null,
   trainsSuggestionError: null,
+
+  // get all travel bookings
+  allTravelBookingStatus: "idle",
+  allTravelBooking: null,
+  allTravelBookingError: null,
 };
 
 export const getFlightsSuggestions = createAsyncThunk(
@@ -44,6 +49,20 @@ export const bookFlight = createAsyncThunk(
       const response = await protectedInstance.put(
         `/users/trips/travels/booking/${tripId}`,
         flightBookingData
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const getAllTravelBookings = createAsyncThunk(
+  "transportations/getAllTravelBookings",
+  async (tripId, { rejectWithValue }) => {
+    try {
+      const response = await protectedInstance.get(
+        `/users/travels/booking/all/${tripId}`
       );
       return response.data;
     } catch (error) {
@@ -88,6 +107,19 @@ const transportationSlice = createSlice({
       .addCase(bookFlight.rejected, (state, action) => {
         state.flightBookingStatus = "failed";
         state.flightBookingError = action.payload;
+      })
+      .addCase(getAllTravelBookings.pending, (state) => {
+        (state.allTravelBookingStatus = "loading"),
+          (state.allTravelBookingError = null);
+      })
+      .addCase(getAllTravelBookings.fulfilled, (state, action) => {
+        state.allTravelBooking = action.payload;
+        state.allTravelBookingError = null;
+        state.allTravelBookingStatus = "succeeded";
+      })
+      .addCase(getAllTravelBookings.rejected, (state, action) => {
+        state.allTravelBookingStatus = "failed";
+        state.allTravelBookingError = action.payload;
       });
   },
 });
@@ -112,3 +144,11 @@ export const selectFlightBookingStatus = (state) =>
   state.transportations.flightBookingStatus;
 export const selectFlightBookingError = (state) =>
   state.transportations.flightBookingError;
+
+// get all travel booking selectors
+export const selectAllTravelBookingStatus = (state) =>
+  state.transportations.allTravelBookingStatus;
+export const selectAllTravelBookingError = (state) =>
+  state.transportations.allTravelBookingError;
+export const selectAllTravelBooking = (state) =>
+  state.transportations.allTravelBooking;
