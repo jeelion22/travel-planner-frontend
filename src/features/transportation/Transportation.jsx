@@ -183,6 +183,17 @@ const Transportation = ({ trip }) => {
                 .then(() => resetForm())
                 .catch((err) => alert(JSON.stringify(err, null, 2)))
                 .finally(() => setSubmitting(false));
+            } else if (values.travelType === "train") {
+              dispatch(
+                getTrainsSuggestions({
+                  source: values.from,
+                  destination: values.to,
+                })
+              )
+                .unwrap()
+                .then(() => resetForm())
+                .catch((err) => alert(JSON.stringify(err, null, 2)))
+                .finally(() => setSubmitting(false));
             }
           }}
         >
