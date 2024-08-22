@@ -23,6 +23,10 @@ const initialState = {
   allTravelBookingStatus: "idle",
   allTravelBooking: null,
   allTravelBookingError: null,
+
+  // delete travel booking
+  travelBookingCancelStatus: "idle",
+  travelBookingCancelError: null,
 };
 
 export const getFlightsSuggestions = createAsyncThunk(
@@ -64,6 +68,21 @@ export const getAllTravelBookings = createAsyncThunk(
       const response = await protectedInstance.get(
         `/users/travels/booking/all/${tripId}`
       );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const cancelTravelBooking = createAsyncThunk(
+  "transportation/cancelTravelBooking",
+  async (bookingId, { rejectWithValue }) => {
+    try {
+      const response = await protectedInstance.delete(
+        `/users/travels/booking/${bookingId}`
+      );
+
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -113,13 +132,45 @@ const transportationSlice = createSlice({
           (state.allTravelBookingError = null);
       })
       .addCase(getAllTravelBookings.fulfilled, (state, action) => {
-        state.allTravelBooking = action.payload;
+        const result = action.payload;
+
+        const flightsBooked = [];
+        const trainsBooked = [];
+        const carsBooked = [];
+
+        if (result.length > 0) {
+          result.forEach((booking) => {
+            if (booking["travelType"] === "flight") {
+              flightsBooked.push(booking);
+            } else if (booking["travelType"] === "train") {
+              trainsBooked.push(booking);
+            } else if (booking["travelType"] === "car rental") {
+              carsBooked.push(booking);
+            }
+          });
+        }
+
+        const bookings = { flightsBooked, trainsBooked, carsBooked };
+
+        state.allTravelBooking = bookings;
         state.allTravelBookingError = null;
         state.allTravelBookingStatus = "succeeded";
       })
       .addCase(getAllTravelBookings.rejected, (state, action) => {
         state.allTravelBookingStatus = "failed";
         state.allTravelBookingError = action.payload;
+      })
+      .addCase(cancelTravelBooking.pending, (state) => {
+        state.travelBookingCancelStatus = "loading";
+        state.travelBookingCancelError = null;
+      })
+      .addCase(cancelTravelBooking.fulfilled, (state, action) => {
+        state.travelBookingCancelStatus = "succeeded";
+        state.travelBookingCancelError = null;
+      })
+      .addCase(cancelTravelBooking.rejected, (state, action) => {
+        state.travelBookingCancelStatus = "failed";
+        state.travelBookingCancelError = action.payload;
       });
   },
 });
@@ -152,3 +203,9 @@ export const selectAllTravelBookingError = (state) =>
   state.transportations.allTravelBookingError;
 export const selectAllTravelBooking = (state) =>
   state.transportations.allTravelBooking;
+
+// cancel travel booking
+export const selectTravelBookingCancelStatus = (state) =>
+  state.transportations.travelBookingCancelStatus;
+export const selectTravelBookingCancelError = (state) =>
+  state.transportations.travelBookingCancelError;

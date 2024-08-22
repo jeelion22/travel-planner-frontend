@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import {
   bookFlight,
+  getAllTravelBookings,
   getFlightsSuggestions,
   resetFlightBooking,
   selectFlightBookingError,
@@ -272,6 +273,10 @@ const Transportation = ({ trip }) => {
                       disabled={flightBookingStatus === "loading"}
                       onClick={() => {
                         handleFlightBooking(flight);
+                        dispatch(getAllTravelBookings(tripId))
+                          .unwrap()
+                          .catch((err) => alert(err));
+                        dispatch(getAllTravelBookings(tripId));
                       }}
                     >
                       {loadingButtons[flight._id] === true ? (

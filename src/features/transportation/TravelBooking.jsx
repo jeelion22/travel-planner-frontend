@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  cancelTravelBooking,
   getAllTravelBookings,
   selectAllTravelBooking,
   selectAllTravelBookingError,
@@ -15,8 +18,12 @@ const TravelBooking = ({ tripId }) => {
 
   const allTravelBooking = useSelector(selectAllTravelBooking);
 
-  const [flightsBooked, setFlightsBooked] = useState([]);
-  const [trainsBooked, setTrainsBooked] = useState([]);
+  const flightsBooked = allTravelBooking?.flightsBooked;
+  const trainsBooked = allTravelBooking?.trainsBooked;
+  const carsBooked = allTravelBooking?.carsBooked;
+
+  // booking cancel
+  const [cancelingBtn, setCancelingBtn] = useState({});
 
   const dispatch = useDispatch();
 
@@ -24,34 +31,85 @@ const TravelBooking = ({ tripId }) => {
     return Date.now() > new Date(departureTime).getTime(0);
   };
 
+  // handling booking cancel
+
+  const handleTravelBookingCancel = (bookedTravelData) => {
+    const travelBookingId = bookedTravelData._id;
+
+    // Set the cancelingBtn state to true for the current booking
+    setCancelingBtn((prev) => ({ ...prev, [travelBookingId]: true }));
+
+    // Dispatch the cancelTravelBooking action
+    dispatch(cancelTravelBooking(travelBookingId))
+      .then(() => {
+        alert("Travel booking canceled");
+
+        // Fetch updated travel bookings after cancellation
+        return dispatch(getAllTravelBookings(tripId));
+      })
+      .catch((err) => {
+        alert(`Error canceling travel booking: ${err.message || err}`);
+      })
+      .finally(() => {
+        // Reset the cancelingBtn state for the current booking
+        setCancelingBtn((prev) => ({ ...prev, [travelBookingId]: false }));
+      });
+  };
+
   useEffect(() => {
     dispatch(getAllTravelBookings(tripId))
       .unwrap()
-      .then((res) => {
-        if (res && res.length > 0) {
-          const flightsBooked = [];
-          const trainsBooked = [];
-
-          res.forEach((booking) => {
-            if (booking["travelType"] === "flight") {
-              flightsBooked.push(booking);
-            } else if (booking["travelType"] === "train") {
-              trainsBooked.push(booking);
-            }
-          });
-          setFlightsBooked(flightsBooked);
-          setTrainsBooked(trainsBooked);
-        }
-      })
       .catch((err) => alert(err));
   }, [dispatch, tripId]);
 
+  if (!allTravelBooking) {
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <i class="bi bi-ticket-detailed-fill fs-1"> </i>
+            <p>No Travel Tickets Booked</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (allTravelBookingStatus === "loading") {
+    <div className="container">
+      <div className="row ">
+        <div className="col text-center">
+          <FontAwesomeIcon icon={faSpinner} spinPulse className="fs-3" />
+          <h6 className="mt-2">Loading...</h6>
+        </div>
+      </div>
+    </div>;
+  }
+
+  if (
+    flightsBooked?.length === 0 &&
+    trainsBooked?.length === 0 &&
+    carsBooked?.length === 0
+  ) {
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <i className="bi bi-ticket-detailed-fill fs-1"></i>
+            <p>No Travel Tickets Booked</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
-      {flightsBooked.length > 0 && (
+      {flightsBooked?.length > 0 && (
         <div className="row">
           <div className="col">
             <h6 className="text-start text-secondary">Flights Booked</h6>
+
             <div
               className="table-responsive"
               style={{
@@ -109,16 +167,22 @@ const TravelBooking = ({ tripId }) => {
                         {travelBooking.cost.amount}
                       </td>
                       <td>
-                        {
-                          <button
-                            className="btn btn-outline-danger rounded-pill"
-                            disabled={isPastDepartureTime(
-                              travelBooking.departureTime
-                            )}
-                          >
-                            Cancel
-                          </button>
-                        }
+                        <button
+                          className="btn btn-outline-danger rounded-pill"
+                          disabled={
+                            isPastDepartureTime(travelBooking.departureTime) ||
+                            cancelingBtn[travelBooking._id]
+                          }
+                          onClick={() => {
+                            handleTravelBookingCancel(travelBooking);
+                          }}
+                        >
+                          {cancelingBtn[travelBooking._id] === true ? (
+                            <span role="status">Canceling...</span>
+                          ) : (
+                            "Cancel"
+                          )}
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -130,7 +194,7 @@ const TravelBooking = ({ tripId }) => {
       )}
 
       {/* booked trains */}
-      {trainsBooked.length > 0 && (
+      {trainsBooked?.length > 0 && (
         <div className="row">
           <div className="col">
             <h6 className="text-start text-secondary">Trains Booked</h6>
@@ -186,16 +250,22 @@ const TravelBooking = ({ tripId }) => {
                         {travelBooking.cost.amount}
                       </td>
                       <td>
-                        {
-                          <button
-                            className="btn btn-outline-danger rounded-pill"
-                            disabled={isPastDepartureTime(
-                              travelBooking.departureTime
-                            )}
-                          >
-                            Cancel
-                          </button>
-                        }
+                        <button
+                          className="btn btn-outline-danger rounded-pill"
+                          disabled={
+                            isPastDepartureTime(travelBooking.departureTime) ||
+                            cancelingBtn[travelBooking._id]
+                          }
+                          onClick={() => {
+                            handleTravelBookingCancel(travelBooking);
+                          }}
+                        >
+                          {cancelingBtn[travelBooking._id] === true ? (
+                            <span role="status">Canceling...</span>
+                          ) : (
+                            "Cancel"
+                          )}
+                        </button>
                       </td>
                     </tr>
                   ))}
