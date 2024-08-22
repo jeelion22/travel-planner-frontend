@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faAlignCenter, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import {
   bookFlight,
+  bookTrain,
   getAllTravelBookings,
   getFlightsSuggestions,
+  getTrainsSuggestions,
   resetFlightBooking,
   selectFlightBookingError,
   selectFlightBookingStatus,
   selectFlightsSuggestionError,
   selectFlightsSuggestionState,
   selectSuggestedFlights,
+  selectSuggestTrains,
+  selectTrainBookingStatus,
+  selectTrainsSuggestionError,
+  selectTrainsSuggestionState,
 } from "./transportationSlice";
 import getSymbolFromCurrency from "currency-symbol-map";
 import ReactPaginate from "react-paginate";
@@ -23,6 +29,14 @@ import { v4 as uuidv4 } from "uuid";
 const Transportation = ({ trip }) => {
   const tripId = trip._id;
 
+  // for trains
+  const trainsSuggestionsState = useSelector(selectTrainsSuggestionState);
+  const trainsSuggestionsError = useSelector(selectTrainsSuggestionError);
+  const suggestedTrains = useSelector(selectSuggestTrains);
+
+  const trainBookingStatus = useSelector(selectTrainBookingStatus);
+
+  // for flights
   const flightsSuggestionsState = useSelector(selectFlightsSuggestionState);
   const flightsSuggestionsError = useSelector(selectFlightsSuggestionError);
   const user = useSelector(selectUser);
@@ -34,6 +48,7 @@ const Transportation = ({ trip }) => {
   const flightBookingError = useSelector(selectFlightBookingError);
 
   const [currentPage, setCurrentPage] = useState(0);
+  const [currentPageTains, setCurrentPageTrains] = useState(0);
   const [loadingButtons, setLoadingButtons] = useState({});
 
   const dispatch = useDispatch();
@@ -44,8 +59,18 @@ const Transportation = ({ trip }) => {
     (currentPage + 1) * itemsPerPage
   );
 
+  const trainsPerPage = 5;
+  const paginatedTrains = suggestedTrains?.slice(
+    currentPageTains * trainsPerPage,
+    (currentPageTains + 1) * trainsPerPage
+  );
+
   const handlePageClick = (data) => {
     setCurrentPage(data.selected);
+  };
+
+  const handlePageClickForTain = (data) => {
+    setCurrentPageTrains(data.selected);
   };
 
   const handleFlightBooking = (flight) => {
@@ -74,8 +99,36 @@ const Transportation = ({ trip }) => {
       .finally(() => {
         setLoadingButtons((prev) => {
           return { ...prev, [flightId]: false };
-        }).dispatch(resetFlightBooking());
+        });
       });
+  };
+
+  const handleTrainBooking = (train) => {
+    const trainId = train._id;
+    setLoadingButtons((prev) => ({ ...prev, [trainId]: true }));
+
+    const trainBookingData = {
+      name: `${user.firstname} ${user.lastname}`,
+      travelType: "train",
+      trainNumber: train.trainNumber,
+      trainName: train.trainName,
+      source: train.source,
+      destination: train.destination,
+      departureTime: train.departureTime,
+      arrivalTime: train.arrivalTime,
+      cost: {
+        currency: train.currency,
+        amount: train.cost,
+      },
+    };
+
+    dispatch(bookTrain({ tripId, trainBookingData }))
+      .unwrap()
+      .then(() => alert("Train booked successfully!"))
+      .catch((err) => alert(err))
+      .finally(() =>
+        setLoadingButtons((prev) => ({ ...prev, [trainId]: false }))
+      );
   };
 
   const initialValues = {
@@ -102,7 +155,15 @@ const Transportation = ({ trip }) => {
         destination: trip.destination,
       })
     );
-  }, [dispatch, tripId]);
+    dispatch(
+      getTrainsSuggestions({
+        source: trip.source,
+        destination: trip.destination,
+      })
+    );
+
+    dispatch(getAllTravelBookings(tripId));
+  }, [dispatch, tripId, trip.source, trip.destination]);
 
   return (
     <>
@@ -269,22 +330,15 @@ const Transportation = ({ trip }) => {
                   <td>
                     <button
                       type="submit"
-                      className="btn btn-outline-primary"
+                      className="btn btn-outline-primary  rounded-pill"
                       disabled={flightBookingStatus === "loading"}
                       onClick={() => {
                         handleFlightBooking(flight);
-                        dispatch(getAllTravelBookings(tripId))
-                          .unwrap()
-                          .catch((err) => alert(err));
-                        dispatch(getAllTravelBookings(tripId));
+                        dispatch(getAllTravelBookings(tripId)).unwrap();
                       }}
                     >
                       {loadingButtons[flight._id] === true ? (
                         <>
-                          {/* <span
-                            className="spinner-border spinner-border-sm"
-                            area-hidden="true"
-                          ></span>{" "} */}
                           <span role="status">Booking...</span>
                         </>
                       ) : (
@@ -318,23 +372,107 @@ const Transportation = ({ trip }) => {
         </div>
       )}
 
-      <div className="table-responsive">
-        <table class="table">
-          <caption className="caption-top">Available Trains</caption>
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">From</th>
-              <th scope="col">To</th>
-              <th scope="col">Dep.Time</th>
-              <th scope="col">Arr.Time</th>
-              <th scope="col">Cost</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
+      {trainsSuggestionsState === "failed" && (
+        <div className="text-center mt-2">
+          <h5>Trains</h5>
+          <i class="bi bi-train-front fs-3"></i>
+          <h6>No Trains Avialable</h6>
+        </div>
+      )}
+
+      {trainsSuggestionsState === "loading" && (
+        <div className="container">
+          <div className="row justify-content-center align-items-center mt-2">
+            <div className="col text-center">
+              <FontAwesomeIcon icon={faSpinner} spinPulse className="fs-3" />
+              <h6 className="mt-2">Loading...</h6>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {trainsSuggestionsState === "succeeded" && (
+        <div className="table-responsive">
+          <table class="table table-striped">
+            <caption className="caption-top">Available Trains</caption>
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Dep.Time</th>
+                <th scope="col">Arr.Time</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedTrains?.map((train, index) => (
+                <tr key={train._id}>
+                  <td>{currentPageTains * trainsPerPage + index + 1}</td>
+                  <td>{train.trainNumber}</td>
+                  <td>{train.trainName}</td>
+                  <td>{train.source}</td>
+                  <td>{train.destination}</td>
+                  <td>
+                    {new Date(train.departureTime).toLocaleString("en-IN", {
+                      timeZone: "UTC",
+                    })}
+                  </td>
+                  <td>
+                    {new Date(train.arrivalTime).toLocaleString("en-IN", {
+                      timeZone: "UTC",
+                    })}
+                  </td>
+                  <td>
+                    {getSymbolFromCurrency(train.currency)}
+                    {train.cost}
+                  </td>
+                  <td>
+                    <button
+                      type="submit"
+                      className="btn btn-outline-primary  rounded-pill"
+                      disabled={trainBookingStatus === "loading"}
+                      onClick={() => {
+                        handleTrainBooking(train);
+                        dispatch(getAllTravelBookings(tripId)).unwrap();
+                      }}
+                    >
+                      {loadingButtons[train._id] === true ? (
+                        <>
+                          <span role="status">Booking...</span>
+                        </>
+                      ) : (
+                        "Book"
+                      )}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <ReactPaginate
+            previousLabel="previous"
+            nextLabel="next"
+            breakLabel="..."
+            pageCount={Math.ceil(suggestedTrains.length / trainsPerPage)}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={3}
+            className="pagination justify-content-center mt-4"
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            previousLinkClassName="page-link"
+            nextClassName="page-item"
+            nextLinkClassName="page-link"
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            activeClassName="active"
+            onPageChange={handlePageClickForTain}
+          />
+        </div>
+      )}
     </>
   );
 };

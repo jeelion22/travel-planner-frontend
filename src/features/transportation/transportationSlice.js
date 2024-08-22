@@ -14,6 +14,11 @@ const initialState = {
   flightBookingError: null,
   flight: null,
 
+  // book train
+  trainBookingStatus: "idle",
+  trainBookingError: null,
+  train: null,
+
   //  train suggestions
   trainsSuggestionState: "idle",
   suggestedTrains: null,
@@ -46,6 +51,23 @@ export const getFlightsSuggestions = createAsyncThunk(
   }
 );
 
+export const getTrainsSuggestions = createAsyncThunk(
+  "transportations/getTrainsSuggestions",
+  async ({ source, destination }, { rejectWithValue }) => {
+    try {
+      if (!source) {
+        source = "_";
+      }
+      const response = await protectedInstance.get(
+        `/users/trips/trains/search?source=${source}&destination=${destination}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 export const bookFlight = createAsyncThunk(
   "transportation/bookFlight",
   async ({ tripId, flightBookingData }, { rejectWithValue }) => {
@@ -53,6 +75,22 @@ export const bookFlight = createAsyncThunk(
       const response = await protectedInstance.put(
         `/users/trips/travels/booking/${tripId}`,
         flightBookingData
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// book train
+export const bookTrain = createAsyncThunk(
+  "transportations/bookTrain",
+  async ({ tripId, trainBookingData }, { rejectWithValue }) => {
+    try {
+      const response = await protectedInstance.put(
+        `/users/trips/travels/booking/${tripId}`,
+        trainBookingData
       );
       return response.data;
     } catch (error) {
@@ -97,6 +135,10 @@ const transportationSlice = createSlice({
     resetFlightBooking(state) {
       state.flightBookingStatus = "idle";
       state.flightBookingError = null;
+    },
+    resetGetAllTravelBookings(state) {
+      state.allTravelBookingStatus = "idle";
+      state.allTravelBookingError = null;
     },
   },
   extraReducers: (builder) => {
@@ -171,13 +213,40 @@ const transportationSlice = createSlice({
       .addCase(cancelTravelBooking.rejected, (state, action) => {
         state.travelBookingCancelStatus = "failed";
         state.travelBookingCancelError = action.payload;
+      })
+      .addCase(getTrainsSuggestions.pending, (state) => {
+        state.trainsSuggestionState = "loading";
+        state.trainsSuggestionState = null;
+      })
+      .addCase(getTrainsSuggestions.fulfilled, (state, action) => {
+        state.trainsSuggestionState = "succeeded";
+        state.suggestedTrains = action.payload;
+        state.trainsSuggestionError = null;
+      })
+      .addCase(getTrainsSuggestions.rejected, (state, action) => {
+        state.trainsSuggestionState = "failed";
+        state.trainsSuggestionError = action.payload;
+      })
+      .addCase(bookTrain.pending, (state) => {
+        state.trainBookingStatus = "loading";
+        state.trainBookingError = null;
+      })
+      .addCase(bookTrain.fulfilled, (state, action) => {
+        state.trainBookingStatus = "succeeded";
+        state.trainBookingError = null;
+        state.train = action.payload;
+      })
+      .addCase(bookTrain.rejected, (state, action) => {
+        state.trainBookingStatus = "failed";
+        state.trainBookingError = action.payload;
       });
   },
 });
 
 export default transportationSlice.reducer;
 
-export const { resetFlightBooking } = transportationSlice.actions;
+export const { resetFlightBooking, resetGetAllTravelBookings } =
+  transportationSlice.actions;
 
 // flight suggestions selectors
 export const selectFlightsSuggestionState = (state) =>
@@ -209,3 +278,18 @@ export const selectTravelBookingCancelStatus = (state) =>
   state.transportations.travelBookingCancelStatus;
 export const selectTravelBookingCancelError = (state) =>
   state.transportations.travelBookingCancelError;
+
+// get trains suggestions selectors
+export const selectSuggestTrains = (state) =>
+  state.transportations.suggestedTrains;
+export const selectTrainsSuggestionState = (state) =>
+  state.transportations.trainsSuggestionState;
+export const selectTrainsSuggestionError = (state) =>
+  state.transportations.trainsSuggestionError;
+
+// train booking selectors
+export const selectTrainBookingStatus = (state) =>
+  state.transportations.trainBookingStatus;
+export const selectTrainBookingError = (state) =>
+  state.transportations.trainBookingError;
+export const selectTrain = (state) => state.transportations.train;

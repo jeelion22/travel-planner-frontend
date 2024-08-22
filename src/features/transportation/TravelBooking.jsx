@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   cancelTravelBooking,
   getAllTravelBookings,
+  resetGetAllTravelBookings,
   selectAllTravelBooking,
   selectAllTravelBookingError,
   selectAllTravelBookingStatus,
@@ -60,6 +61,7 @@ const TravelBooking = ({ tripId }) => {
     dispatch(getAllTravelBookings(tripId))
       .unwrap()
       .catch((err) => alert(err));
+    // dispatch(resetGetAllTravelBookings());
   }, [dispatch, tripId]);
 
   if (!allTravelBooking) {
@@ -76,14 +78,29 @@ const TravelBooking = ({ tripId }) => {
   }
 
   if (allTravelBookingStatus === "loading") {
-    <div className="container">
-      <div className="row ">
-        <div className="col text-center">
-          <FontAwesomeIcon icon={faSpinner} spinPulse className="fs-3" />
-          <h6 className="mt-2">Loading...</h6>
+    return (
+      <div className="container">
+        <div className="row ">
+          <div className="col text-center">
+            <FontAwesomeIcon icon={faSpinner} spinPulse className="fs-3" />
+            <h6 className="mt-2">Loading...</h6>
+          </div>
         </div>
       </div>
-    </div>;
+    );
+  }
+
+  if (allTravelBookingStatus === "failed") {
+    return (
+      <div className="container">
+        <div className="row ">
+          <div className="col text-center">
+            <FontAwesomeIcon icon={faCircleExclamation} beatFade />
+            <h6 className="mt-2">Loading...</h6>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (
@@ -119,7 +136,7 @@ const TravelBooking = ({ tripId }) => {
                 outline: "none",
               }}
             >
-              <table class="table">
+              <table class="table table-striped">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
@@ -207,7 +224,7 @@ const TravelBooking = ({ tripId }) => {
                 outline: "none",
               }}
             >
-              <table class="table">
+              <table class="table table-striped">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
