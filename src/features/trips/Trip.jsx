@@ -29,6 +29,7 @@ import ToDoDescriptionModal from "../toDos/ToDoDescriptionModal";
 import Transportation from "../transportation/Transportation";
 
 import TravelBooking from "../transportation/TravelBooking";
+import Accommodation from "../accommodation/Accommodation";
 
 const Trip = () => {
   const { tripId } = useParams();
@@ -420,6 +421,22 @@ const Trip = () => {
             </div>
           </div>
         </div>
+
+
+
+        <div className="row bg-body-tertiary mt-4 rounded p-4">
+          <div class=" col  mb-3 mb-sm-0 h-100">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center">Accommodation</h5>
+              <Accommodation trip={trip}/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
 
         <div className="row bg-body-tertiary mt-4 rounded p-4">
           <div class=" col  mb-3 mb-sm-0 h-100">
