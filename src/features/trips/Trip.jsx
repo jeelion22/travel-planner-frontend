@@ -31,6 +31,8 @@ import Transportation from "../transportation/Transportation";
 import TravelBooking from "../transportation/TravelBooking";
 import Accommodation from "../accommodation/Accommodation";
 import BookedAccommodations from "../accommodation/BookedAccommodations";
+import { selectAllBookedAccommodations } from "../accommodation/accommodationSlice";
+import { selectAllTravelBooking } from "../transportation/transportationSlice";
 
 const Trip = () => {
   const { tripId } = useParams();
@@ -44,6 +46,34 @@ const Trip = () => {
   const allToDos = useSelector(selectAllToDos);
 
   const allToDoStatus = useSelector(selectAllToDosStatus);
+
+  // amount spent on accommodation booking
+  const bookedAccommodations = useSelector(selectAllBookedAccommodations);
+
+  const accommodationAmt = bookedAccommodations
+    ?.map((accommodation) => {
+      return accommodation.cost.amount;
+    })
+    .reduce((amt, acc) => amt + acc, 0);
+
+  // amount spent on transportation
+  const flightAmt = useSelector(selectAllTravelBooking)?.flightsBooked?.map((travel) => travel.cost.amount)
+    .reduce((amt, acc) => amt + acc, 0);
+
+    const trainAmt = useSelector(selectAllTravelBooking)?.trainsBooked?.map((travel) => travel.cost.amount)
+    .reduce((amt, acc) => amt + acc, 0);
+
+    let transportationAmt;
+
+    if (flightAmt && trainAmt){
+      transportationAmt =  flightAmt + trainAmt
+    }
+    else if (!flightAmt && trainAmt){
+      transportationAmt = trainAmt
+    } else if (flightAmt && !trainAmt) {
+      transportationAmt = flightAmt
+    }
+
 
   const calculateBudget = (arr) => {
     const bud = arr.filter((item) =>
@@ -200,7 +230,7 @@ const Trip = () => {
                             </td>
                             <td>
                               {getSymbolFromCurrency(trip.budget.currency)}
-                              {trip.budget.transportation}
+                              {transportationAmt || trip.budget.transportation}
                             </td>
                             <td>
                               {getSymbolFromCurrency(trip.budget.currency)}
@@ -218,7 +248,8 @@ const Trip = () => {
                             </td>
                             <td>
                               {getSymbolFromCurrency(trip.budget.currency)}
-                              {trip.budget.accommodation}
+
+                              {accommodationAmt || trip.budget.accommodation}
                             </td>
                             <td>
                               {getSymbolFromCurrency(trip.budget.currency)}
