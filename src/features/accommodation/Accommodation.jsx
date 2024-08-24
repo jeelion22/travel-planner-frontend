@@ -12,6 +12,8 @@ import {
 } from "./accommodationSlice";
 import getSymbolFromCurrency from "currency-symbol-map";
 import ReactPaginate from "react-paginate";
+import { selectUser } from "../users/usersSlice";
+import AccommodationBookingModal from "./AccommodationBookingModal";
 
 const Accommodation = ({ trip }) => {
   const tripId = trip._id;
@@ -19,9 +21,13 @@ const Accommodation = ({ trip }) => {
   const accommodationSearchStatus = useSelector(
     selectAccommodationSearchStatus
   );
+  const user = useSelector(selectUser);
   const accommodationSearchError = useSelector(selectAccommodationSearchError);
 
-  const dispatch = useDispatch(0);
+  const dispatch = useDispatch();
+
+  // loading accommodation btns
+  const [accommodationLoadingBtn, setAccommodationLoadingBtn] = useState({});
 
   // pagination
   const [accommodationCurrentPage, setAccommodationCurrentPage] = useState(0);
@@ -148,10 +154,19 @@ const Accommodation = ({ trip }) => {
                     {accommodation.cost.amount}
                   </td>
                   <td>
-                    <button className="btn btn-outline-primary rounded-pill">
+                    <button
+                      className="btn btn-outline-primary rounded-pill"
+                      data-bs-toggle="modal"
+                      data-bs-target={`#accommodationBookingModal-${accommodation._id}`}
+                    >
                       Book
                     </button>
                   </td>
+
+                  <AccommodationBookingModal
+                    accommodation={accommodation}
+                    tripId={tripId}
+                  />
                 </tr>
               ))}
             </tbody>
