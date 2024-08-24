@@ -130,14 +130,13 @@ const AccommodationBookingModal = ({ accommodation, tripId }) => {
                           .then(() => {
                             setIsBooked(true);
                             resetForm();
+                            return dispatch(getAllBookedAccommodations(tripId));
                           })
                           .catch()
                           .finally(() => {
                             setIsLoading(false);
                             setSubmitting(false);
                           });
-
-                        dispatch(getAllBookedAccommodations(tripId));
                       }}
                     >
                       {(formik) => (
