@@ -30,6 +30,7 @@ import Transportation from "../transportation/Transportation";
 
 import TravelBooking from "../transportation/TravelBooking";
 import Accommodation from "../accommodation/Accommodation";
+import BookedAccommodations from "../accommodation/BookedAccommodations";
 
 const Trip = () => {
   const { tripId } = useParams();
@@ -152,6 +153,7 @@ const Trip = () => {
                   })}
                 </p>
                 <TravelBooking tripId={tripId} />
+                <BookedAccommodations tripId={tripId} />
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary">
@@ -422,21 +424,16 @@ const Trip = () => {
           </div>
         </div>
 
-
-
         <div className="row bg-body-tertiary mt-4 rounded p-4">
           <div class=" col  mb-3 mb-sm-0 h-100">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title text-center">Accommodation</h5>
-              <Accommodation trip={trip}/>
+                <Accommodation trip={trip} />
               </div>
             </div>
           </div>
         </div>
-
-
-
 
         <div className="row bg-body-tertiary mt-4 rounded p-4">
           <div class=" col  mb-3 mb-sm-0 h-100">
