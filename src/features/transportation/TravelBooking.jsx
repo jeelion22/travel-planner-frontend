@@ -42,6 +42,7 @@ const TravelBooking = ({ tripId }) => {
 
     // Dispatch the cancelTravelBooking action
     dispatch(cancelTravelBooking(travelBookingId))
+      .unwrap()
       .then(() => {
         alert("Travel booking canceled");
 
