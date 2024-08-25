@@ -1,6 +1,45 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { instance, protectedInstance } from "../../../services/instance";
 
+const initialState = {
+  // user
+  user: null,
+
+  // userId
+  userId: null,
+
+  // user register
+  userRegisterStatus: "idle",
+  userRegisterError: null,
+
+  // test
+  status: "idle",
+  error: null,
+  message: null,
+
+  // user login status
+  userLoginStatus: "idle",
+  userLoginError: null,
+  isAuthorized: false,
+
+  // user email verification
+  isUserEmailVerified: false,
+  userEmailVerificationStatus: "idle",
+  userEmailVerificationError: null,
+
+  // user forgot password
+  userPasswordResetStatus: "idle",
+  userPasswordResetError: null,
+
+  // user password reset otp status
+  userPasswordResetOtpStatus: "idle",
+  userPasswordResetOtpError: null,
+
+  // user password set
+  userPasswordSetStatus: "idle",
+  userPasswordSetError: null,
+};
+
 export const registerUser = createAsyncThunk(
   "users/registerUser",
   async (userData, { rejectWithValue }) => {
@@ -61,32 +100,18 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-const initialState = {
-  // user
-  user: null,
-
-  // userId
-  userId: null,
-
-  // user register
-  userRegisterStatus: "idle",
-  userRegisterError: null,
-
-  // test
-  status: "idle",
-  error: null,
-  message: null,
-
-  // user login status
-  userLoginStatus: "idle",
-  userLoginError: null,
-  isAuthorized: false,
-
-  // user email verification
-  isUserEmailVerified: false,
-  userEmailVerificationStatus: "idle",
-  userEmailVerificationError: null,
-};
+// user's forgot password request
+export const forgotPassword = createAsyncThunk(
+  "users/forgotPassword",
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await instance.post("/users/forgot-password", email);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(err.response.data.message);
+    }
+  }
+);
 
 const userSlice = createSlice({
   name: "users",
@@ -170,6 +195,18 @@ const userSlice = createSlice({
       .addCase(logoutUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      .addCase(forgotPassword.pending, (state) => {
+        state.userPasswordResetStatus = "loading";
+        state.userPasswordResetError = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.userPasswordResetStatus = "succeeded";
+        state.userPasswordResetError = null;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.userPasswordResetStatus = "failed";
+        state.userPasswordResetError = action.payload;
       });
   },
 });
@@ -204,3 +241,9 @@ export const selectIsUserEmailVerified = (state) =>
   state.users.isUserEmailVerified;
 
 export const selectIsAuthorized = (state) => state.users.isAuthorized;
+
+// user forgot password OTP status
+export const selectUserPasswordResetStatus = (state) =>
+  state.users.userPasswordResetStatus;
+export const selectUserPasswordResetError = (state) =>
+  state.users.userPasswordResetError;
