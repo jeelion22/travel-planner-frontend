@@ -8,13 +8,10 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import { userRegistrationValidationSchema } from "../validationSchema/userRegistrationValidationSchema";
 import PhoneField from "./PhoneField";
 
-import VerifyEmail from "./VerifyEmail";
-import { Modal } from "bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
   registerUser,
-  selectUserError,
-  selectUserStatus,
+  selectUserRegisterStatus,
 } from "../features/users/usersSlice";
 
 const intialValues = {
@@ -30,16 +27,8 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const modalRef = useRef(null);
-
-  const status = useSelector(selectUserStatus);
-  const error = useSelector(selectUserError);
-
-  const openModal = () => {
-    const modalElement = modalRef.current;
-    const modal = new Modal(modalElement);
-    modal.show();
-  };
+  // user register state
+  const userRegisterStatus = useSelector(selectUserRegisterStatus);
 
   return (
     <div className="container">
@@ -48,18 +37,18 @@ const Register = () => {
           <Formik
             initialValues={intialValues}
             validationSchema={userRegistrationValidationSchema}
-            onSubmit={(values, { resetForm }) => {
+            onSubmit={(values, { resetForm, setSubmitting }) => {
               dispatch(registerUser(values))
                 .unwrap()
                 .then((res) => {
                   alert(res.message);
                   resetForm();
-                  // openModal();
                   navigate("/login");
                 })
                 .catch((err) => {
                   alert(err);
-                });
+                })
+                .finally(() => setSubmitting(false));
             }}
           >
             {(formik) => (
@@ -206,17 +195,13 @@ const Register = () => {
                   />
                 </div>
 
-                {/* {status === "failed" && (
-                  <div className="text-danger mt-2">{error}</div>
-                )} */}
-
                 <div className="text-end">
                   <button
                     type="submit"
-                    class="btn btn-outline-primary rounded-pill mt-3"
-                    disabled={status === "loading"}
+                    className="btn btn-outline-primary rounded-pill mt-3"
+                    disabled={userRegisterStatus === "loading"}
                   >
-                    {status === "loading" ? (
+                    {userRegisterStatus === "loading" ? (
                       <>
                         <span
                           className="spinner-border spinner-border-sm"
@@ -243,36 +228,6 @@ const Register = () => {
               <Link to={"/login"} className="link-primary">
                 Login
               </Link>{" "}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="modal fade"
-        id="staticBackdrop"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        tabindex="-1"
-        aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-        ref={modalRef}
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              {/* <h3 class="modal-title" id="staticBackdropLabel">
-                Verify Email Address
-              </h3> */}
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <VerifyEmail />
             </div>
           </div>
         </div>

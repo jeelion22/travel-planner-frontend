@@ -17,6 +17,7 @@ import DashboardLayout from "./components/DashboardLayout";
 import Trip from "./features/trips/Trip";
 
 const App = () => {
+  
   const dispatch = useDispatch();
 
   useEffect(() => {

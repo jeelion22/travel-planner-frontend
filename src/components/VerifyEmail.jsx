@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import OtpInput from "react-otp-input";
 import { redirect, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { verifyAccount } from "../features/users/usersSlice";
+import {
+  selectUserEmailVerificationError,
+  selectUserEmailVerificationStatus,
+  verifyAccount,
+  selectUserId
+} from "../features/users/usersSlice";
 import {
   selectUser,
   selectUserError,
@@ -16,20 +21,31 @@ const VerifyEmail = () => {
   const status = useSelector(selectUserStatus);
   const error = useSelector(selectUserError);
   const user = useSelector(selectUser);
-  const userId = user?._id;
+  const userId = useSelector(selectUserId);
+
+  const userEmailVerificationStatus = useSelector(
+    selectUserEmailVerificationStatus
+  );
+  const userEmailVerificationError = useSelector(
+    selectUserEmailVerificationError
+  );
 
   const [otp, setOtp] = useState("");
 
-  const verifyOtp = () =>
-    dispatch(verifyAccount({ userId, otp: { emailOtp: otp } }))
-      .unwrap()
-      .then((res) => {
-        alert(res.message);
-        navigate(0);
-      })
-      .catch((err) => {
-        console.log(err), alert(err);
-      });
+  const verifyOtp = () => {
+    if (userId) {
+      dispatch(verifyAccount({ userId, otp: { emailOtp: otp } }))
+        .unwrap()
+        .then((res) => {
+          alert(res.message);
+
+          navigate(0);
+        })
+        .catch((err) => {
+          console.log(err), alert(err);
+        });
+    }
+  };
 
   return (
     <div className="container">
@@ -63,7 +79,7 @@ const VerifyEmail = () => {
                     disabled={status === "loading"}
                     onClick={verifyOtp}
                   >
-                    {status === "loading" ? (
+                    {userEmailVerificationStatus === "loading" ? (
                       <>
                         <span
                           className="spinner-border spinner-border-sm"
@@ -79,8 +95,10 @@ const VerifyEmail = () => {
               </div>
             </div>
 
-            {error && (
-              <div className="text-danger text-center mt-2">{error}</div>
+            {userEmailVerificationError && (
+              <div className="text-danger text-center mt-2">
+                {userEmailVerificationError}
+              </div>
             )}
 
             <div className="text-center">

@@ -8,6 +8,7 @@ import {
   selectTrip,
   selectTripError,
   selectTripStatus,
+  updateBudget,
 } from "./tripSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import getSymbolFromCurrency from "currency-symbol-map";
@@ -42,6 +43,7 @@ const Trip = () => {
 
   const status = useSelector(selectTripStatus);
   const trip = useSelector(selectTrip);
+
   const error = useSelector(selectTripError);
   const allToDos = useSelector(selectAllToDos);
 
@@ -57,23 +59,23 @@ const Trip = () => {
     .reduce((amt, acc) => amt + acc, 0);
 
   // amount spent on transportation
-  const flightAmt = useSelector(selectAllTravelBooking)?.flightsBooked?.map((travel) => travel.cost.amount)
+  const flightAmt = useSelector(selectAllTravelBooking)
+    ?.flightsBooked?.map((travel) => travel.cost.amount)
     .reduce((amt, acc) => amt + acc, 0);
 
-    const trainAmt = useSelector(selectAllTravelBooking)?.trainsBooked?.map((travel) => travel.cost.amount)
+  const trainAmt = useSelector(selectAllTravelBooking)
+    ?.trainsBooked?.map((travel) => travel.cost.amount)
     .reduce((amt, acc) => amt + acc, 0);
 
-    let transportationAmt;
+  let transportationAmt;
 
-    if (flightAmt && trainAmt){
-      transportationAmt =  flightAmt + trainAmt
-    }
-    else if (!flightAmt && trainAmt){
-      transportationAmt = trainAmt
-    } else if (flightAmt && !trainAmt) {
-      transportationAmt = flightAmt
-    }
-
+  if (flightAmt && trainAmt) {
+    transportationAmt = flightAmt + trainAmt;
+  } else if (!flightAmt && trainAmt) {
+    transportationAmt = trainAmt;
+  } else if (flightAmt && !trainAmt) {
+    transportationAmt = flightAmt;
+  }
 
   const calculateBudget = (arr) => {
     const bud = arr.filter((item) =>
@@ -139,6 +141,27 @@ const Trip = () => {
     dispatch(getAllToDos(tripId));
   }, [dispatch, tripId, navigate]);
 
+  useEffect(() => {
+    if (
+      trip &&
+      transportationAmt !== undefined &&
+      accommodationAmt !== undefined
+    ) {
+      dispatch(
+        updateBudget({
+          tripId,
+          budget: {
+            ...trip.budget,
+            transportation: transportationAmt,
+            accommodation: accommodationAmt,
+          },
+        })
+      )
+        .unwrap()
+        .catch((err) => alert(err));
+    }
+  }, [dispatch, trip, transportationAmt, accommodationAmt, tripId]);
+
   if (status === "loading") {
     return (
       <div className="container">
@@ -162,6 +185,32 @@ const Trip = () => {
   if (status === "succeeded") {
     return (
       <div className="container">
+        <div className="row bg-body-tertiary mt-4 p-2 rounded">
+
+        <div className="col">
+            <h4 className="text-center p-2">Trip Detail</h4>
+          </div>
+          <div className="col-auto p-2">
+            <button
+              data-bs-theme="dark"
+              type="button"
+              class="btn-close  fs-5"
+              aria-label="Close"
+              onClick={()=>{navigate("/dashboard")}}
+            ></button>
+          </div>
+         
+
+          {/* <div data-bs-theme="dark">
+            <button type="button" class="btn-close" aria-label="Close"></button>
+            <button
+              type="button"
+              class="btn-close"
+              disabled
+              aria-label="Close"
+            ></button>
+          </div> */}
+        </div>
         <div className="row bg-body-tertiary mt-4 rounded p-4 text-center">
           {/* card for little dashboard */}
           <div class="col-md-6 col-sm-6 mb-3 mb-sm-0">
@@ -229,7 +278,7 @@ const Trip = () => {
                               {trip.budget.transportationBudget}
                             </td>
                             <td>
-                              {getSymbolFromCurrency(trip.budget.currency)}
+                              {getSymbolFromCurrency(trip?.budget?.currency)}
                               {transportationAmt || trip.budget.transportation}
                             </td>
                             <td>

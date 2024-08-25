@@ -198,10 +198,10 @@ const Transportation = ({ trip }) => {
           }}
         >
           {(formik) => (
-            <Form className="d-flex gap-2 justify-content-center ">
-              <div className="">
+            <Form className="d-flex gap-2  ">
+              <div className="col">
                 <Field
-                  type="text"
+                  type="search"
                   name="from"
                   className={`form-control ${
                     formik.touched.from
@@ -219,9 +219,9 @@ const Transportation = ({ trip }) => {
                 />
               </div>
 
-              <div>
+              <div className="col">
                 <Field
-                  type="text"
+                  type="search"
                   name="to"
                   className={`form-control ${
                     formik.touched.to

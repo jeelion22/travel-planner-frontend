@@ -61,14 +61,36 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+const initialState = {
+  // user
+  user: null,
+
+  // userId
+  userId: null,
+
+  // user register
+  userRegisterStatus: "idle",
+  userRegisterError: null,
+
+  // test
+  status: "idle",
+  error: null,
+  message: null,
+
+  // user login status
+  userLoginStatus: "idle",
+  userLoginError: null,
+  isAuthorized: false,
+
+  // user email verification
+  isUserEmailVerified: false,
+  userEmailVerificationStatus: "idle",
+  userEmailVerificationError: null,
+};
+
 const userSlice = createSlice({
   name: "users",
-  initialState: {
-    user: null,
-    status: "idle",
-    error: null,
-    message: null,
-  },
+  initialState,
   reducers: {
     clearMessage(state) {
       state.message = null;
@@ -77,40 +99,52 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state, action) => {
-        state.status = "loading";
-        state.error = null;
+        state.userRegisterStatus = "loading";
+        state.userRegisterError = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.user = action.payload;
+        state.userRegisterStatus = "succeeded";
+        state.userRegisterError = action.payload;
       })
       .addCase(registerUser.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
+        state.userRegisterStatus = "failed";
+        state.userRegisterError = action.payload;
       })
+      // email verification
       .addCase(verifyAccount.pending, (state, action) => {
-        state.status = "loading";
-        state.err = null;
+        state.userEmailVerificationStatus = "loading";
+        state.userEmailVerificationError = null;
       })
       .addCase(verifyAccount.fulfilled, (state, action) => {
-        state.status = "succeeded";
+        state.userEmailVerificationStatus = "succeeded";
+        state.isUserEmailVerified = true;
         state.user = action.payload;
+        state.userEmailVerificationError = null;
       })
       .addCase(verifyAccount.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
+        state.userEmailVerificationStatus = "failed";
+        state.userEmailVerificationError = action.payload;
       })
+      // user login case
       .addCase(userLogin.pending, (state, action) => {
-        state.status = "loading";
-        state.error = null;
+        state.userLoginStatus = "loading";
+        state.userLoginError = null;
       })
       .addCase(userLogin.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.user = action.payload;
+        if (action.payload.userId) {
+          state.userId = action.payload.userId;
+        } else {
+          // for the case of verified email
+          state.userLoginStatus = "succeeded";
+          state.user = action.payload;
+          state.userLoginError = null;
+          state.isAuthorized = true;
+          state.isUserEmailVerified = true;
+        }
       })
       .addCase(userLogin.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
+        state.userLoginStatus = "failed";
+        state.userLoginError = action.payload;
       })
       .addCase(getUser.pending, (state, action) => {
         state.status = "loading";
@@ -147,3 +181,26 @@ export const selectUserStatus = (state) => state.users.status;
 export const selectUserError = (state) => state.users.error;
 export const selectUser = (state) => state.users.user;
 export const selectUserMessage = (state) => state.users.message;
+
+// user register selector
+export const selectUserRegisterStatus = (state) =>
+  state.users.userRegisterStatus;
+export const selectUserRegisterError = (state) => state.users.userRegisterError;
+
+// user login selector
+export const selectUserLoginStatus = (state) => state.users.userLoginStatus;
+export const selectUserLoginError = (state) => state.users.userLoginError;
+
+// user id
+export const selectUserId = (state) => state.users.userId;
+
+// user email verification status
+export const selectUserEmailVerificationStatus = (state) =>
+  state.users.userEmailVerificationStatus;
+export const selectUserEmailVerificationError = (state) =>
+  state.users.userEmailVerificationError;
+
+export const selectIsUserEmailVerified = (state) =>
+  state.users.isUserEmailVerified;
+
+export const selectIsAuthorized = (state) => state.users.isAuthorized;

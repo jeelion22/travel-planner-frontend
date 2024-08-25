@@ -1,11 +1,14 @@
 import React, { useRef } from "react";
-import { Link,  useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Modal } from "bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  
+  selectIsAuthorized,
   selectUser,
   selectUserError,
+  selectUserId,
+  selectUserLoginError,
+  selectUserLoginStatus,
   selectUserStatus,
   userLogin,
 } from "../features/users/usersSlice";
@@ -37,27 +40,18 @@ const Login = () => {
   const error = useSelector(selectUserError);
   const user = useSelector(selectUser);
 
+  // user login state
+  const userLoginStatus = useSelector(selectUserLoginStatus);
+  const userLoginError = useSelector(selectUserLoginError);
+  const userId = useSelector(selectUserId);
+
+  // authorization
+  const isUserAuthorized = useSelector(selectIsAuthorized);
+
   const openModal = () => {
     const modalElement = modalRef.current;
     const modal = new Modal(modalElement);
     modal.show();
-  };
-
-  const handleLoginSubmit = async (credentials, { resetForm }) => {
-    try {
-      const res = await dispatch(userLogin(credentials)).unwrap();
-      if (res.token || user) {
-        // Dispatch getUser to fetch user info
-        // await dispatch(getUser()).unwrap();
-        navigate("/dashboard");
-      } else {
-        openModal();
-      }
-    } catch (err) {
-      console.log(err);
-      alert(err);
-    }
-    resetForm();
   };
 
   return (
@@ -67,7 +61,23 @@ const Login = () => {
           <Formik
             initialValues={initialValues}
             validationSchema={userLoginValidationSchema}
-            onSubmit={handleLoginSubmit}
+            onSubmit={(values, { resetForm, setSubmitting }) => {
+              dispatch(userLogin(values))
+                .unwrap()
+                .then((res) => {
+                  if (res?.userId) {
+                    openModal();
+                  } else if (res.token) {
+                    navigate("/dashboard");
+                  } else navigate("/login");
+                })
+                .catch((err) => alert(err))
+
+                .finally(() => {
+                  resetForm();
+                  setSubmitting(false);
+                });
+            }}
           >
             {(formik) => (
               <Form
@@ -135,8 +145,12 @@ const Login = () => {
                 </div>
 
                 <div className="text-end">
-                  <button type="submit" class="btn btn-outline-primary mt-3">
-                    {status === "loading" ? (
+                  <button
+                    type="submit"
+                    class="btn btn-outline-primary mt-3"
+                    disabled={userLoginStatus === "loading"}
+                  >
+                    {userLoginStatus === "loading" ? (
                       <>
                         <span
                           className="spinner-border spinner-border-sm"
