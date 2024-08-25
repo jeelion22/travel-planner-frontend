@@ -50,32 +50,32 @@ const Trip = () => {
   const allToDoStatus = useSelector(selectAllToDosStatus);
 
   // amount spent on accommodation booking
-  const bookedAccommodations = useSelector(selectAllBookedAccommodations);
+  // const bookedAccommodations = useSelector(selectAllBookedAccommodations);
 
-  const accommodationAmt = bookedAccommodations
-    ?.map((accommodation) => {
-      return accommodation.cost.amount;
-    })
-    .reduce((amt, acc) => amt + acc, 0);
+  // const accommodationAmt = bookedAccommodations
+  //   ?.map((accommodation) => {
+  //     return accommodation.cost.amount;
+  //   })
+  //   .reduce((amt, acc) => amt + acc, 0);
 
   // amount spent on transportation
-  const flightAmt = useSelector(selectAllTravelBooking)
-    ?.flightsBooked?.map((travel) => travel.cost.amount)
-    .reduce((amt, acc) => amt + acc, 0);
+  // const flightAmt = useSelector(selectAllTravelBooking)
+  //   ?.flightsBooked?.map((travel) => travel.cost.amount)
+  //   .reduce((amt, acc) => amt + acc, 0);
 
-  const trainAmt = useSelector(selectAllTravelBooking)
-    ?.trainsBooked?.map((travel) => travel.cost.amount)
-    .reduce((amt, acc) => amt + acc, 0);
+  // const trainAmt = useSelector(selectAllTravelBooking)
+  //   ?.trainsBooked?.map((travel) => travel.cost.amount)
+  //   .reduce((amt, acc) => amt + acc, 0);
 
-  let transportationAmt;
+  // let transportationAmt;
 
-  if (flightAmt && trainAmt) {
-    transportationAmt = flightAmt + trainAmt;
-  } else if (!flightAmt && trainAmt) {
-    transportationAmt = trainAmt;
-  } else if (flightAmt && !trainAmt) {
-    transportationAmt = flightAmt;
-  }
+  // if (flightAmt && trainAmt) {
+  //   transportationAmt = flightAmt + trainAmt;
+  // } else if (!flightAmt && trainAmt) {
+  //   transportationAmt = trainAmt;
+  // } else if (flightAmt && !trainAmt) {
+  //   transportationAmt = flightAmt;
+  // }
 
   const calculateBudget = (arr) => {
     const bud = arr.filter((item) =>
@@ -141,26 +141,26 @@ const Trip = () => {
     dispatch(getAllToDos(tripId));
   }, [dispatch, tripId, navigate]);
 
-  useEffect(() => {
-    if (
-      trip &&
-      transportationAmt !== undefined &&
-      accommodationAmt !== undefined
-    ) {
-      dispatch(
-        updateBudget({
-          tripId,
-          budget: {
-            ...trip.budget,
-            transportation: transportationAmt,
-            accommodation: accommodationAmt,
-          },
-        })
-      )
-        .unwrap()
-        .catch((err) => alert(err));
-    }
-  }, [dispatch, trip, transportationAmt, accommodationAmt, tripId]);
+  // useEffect(() => {
+  //   if (
+  //     trip &&
+  //     transportationAmt !== undefined &&
+  //     accommodationAmt !== undefined
+  //   ) {
+  //     dispatch(
+  //       updateBudget({
+  //         tripId,
+  //         budget: {
+  //           ...trip.budget,
+  //           transportation: transportationAmt,
+  //           accommodation: accommodationAmt,
+  //         },
+  //       })
+  //     )
+  //       .unwrap()
+  //       .catch((err) => alert(err));
+  //   }
+  // }, [dispatch, trip, transportationAmt, accommodationAmt, tripId]);
 
   if (status === "loading") {
     return (
@@ -200,16 +200,6 @@ const Trip = () => {
               }}
             ></button>
           </div>
-
-          {/* <div data-bs-theme="dark">
-            <button type="button" class="btn-close" aria-label="Close"></button>
-            <button
-              type="button"
-              class="btn-close"
-              disabled
-              aria-label="Close"
-            ></button>
-          </div> */}
         </div>
         <div className="row bg-body-tertiary mt-4 rounded p-4 text-center">
           {/* card for little dashboard */}
@@ -279,7 +269,7 @@ const Trip = () => {
                             </td>
                             <td>
                               {getSymbolFromCurrency(trip?.budget?.currency)}
-                              {transportationAmt || trip.budget.transportation}
+                              {trip.budget.transportation}
                             </td>
                             <td>
                               {getSymbolFromCurrency(trip.budget.currency)}
@@ -298,7 +288,7 @@ const Trip = () => {
                             <td>
                               {getSymbolFromCurrency(trip.budget.currency)}
 
-                              {accommodationAmt || trip.budget.accommodation}
+                              {trip.budget.accommodation}
                             </td>
                             <td>
                               {getSymbolFromCurrency(trip.budget.currency)}

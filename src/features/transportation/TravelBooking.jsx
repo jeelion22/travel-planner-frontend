@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  bookFlight,
   cancelTravelBooking,
   getAllTravelBookings,
   resetGetAllTravelBookings,
@@ -12,6 +13,7 @@ import {
 } from "./transportationSlice";
 import { selectAllToDosStatus } from "../toDos/toDoSlice";
 import getSymbolFromCurrency from "currency-symbol-map";
+import { bookAccommodation } from "../accommodation/accommodationSlice";
 
 const TravelBooking = ({ tripId }) => {
   const allTravelBookingStatus = useSelector(selectAllTravelBookingStatus);
@@ -63,7 +65,7 @@ const TravelBooking = ({ tripId }) => {
       .unwrap()
       .catch((err) => alert(err));
     // dispatch(resetGetAllTravelBookings());
-  }, [dispatch, tripId]);
+  }, [dispatch, tripId, bookFlight, bookAccommodation]);
 
   if (!allTravelBooking) {
     return (

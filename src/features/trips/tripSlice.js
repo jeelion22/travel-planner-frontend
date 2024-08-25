@@ -8,6 +8,14 @@ const initialState = {
   error: null,
   updateBudgetStatus: "idle",
   updateBudgetError: null,
+
+  // trip delete
+  tripDeleteStatus: "idle",
+  tripDeleteError: null,
+
+  // trip update
+  tripUpdateStatus: "idle",
+  tripUpdateError: null,
 };
 
 // create trip
@@ -58,6 +66,36 @@ export const updateBudget = createAsyncThunk(
       const response = await protectedInstance.put(
         `/users/trips/updateBudget/${tripId}`,
         budget
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// delete Trip
+export const deleteTripById = createAsyncThunk(
+  "trips/deleteTripById",
+  async (tripId, { rejectWithValue }) => {
+    try {
+      const response = await protectedInstance.delete(`/users/trips/${tripId}`);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// update trip
+export const updateTripById = createAsyncThunk(
+  "trips/updateTripById",
+  async ({ tripId, tripData }, {rejectWithValue}) => {
+    try {
+      const response = await protectedInstance.put(
+        `/users/trips/edit/${tripId}`,
+        tripData
       );
       return response.data;
     } catch (error) {
@@ -123,6 +161,29 @@ const tripSlice = createSlice({
       .addCase(updateBudget.rejected, (state, action) => {
         state.updateBudgetStatus = "failed";
         state.updateBudgetError = action.payload;
+      })
+      .addCase(deleteTripById.pending, (state) => {
+        state.tripDeleteStatus = "loading";
+      })
+      .addCase(deleteTripById.fulfilled, (state) => {
+        state.tripDeleteStatus = "succeeded";
+        state.tripDeleteError = null;
+      })
+      .addCase(deleteTripById.rejected, (state, action) => {
+        state.tripDeleteStatus = "failed";
+        state.tripDeleteError = action.payload;
+      })
+      .addCase(updateTripById.pending, (state) => {
+        state.tripUpdateStatus = "loading";
+        state.tripUpdateError = null;
+      })
+      .addCase(updateTripById.fulfilled, (state) => {
+        state.tripUpdateStatus = "succeeded";
+        state.tripUpdateError = null;
+      })
+      .addCase(updateTripById.rejected, (state, action) => {
+        state.tripUpdateStatus = "failed";
+        state.tripUpdateError = action.payload;
       });
   },
 });
@@ -139,3 +200,11 @@ export const selectTrip = (state) => state.trips.trip;
 export const selectBudgetUpdateStatus = (state) =>
   state.trips.updateBudgetStatus;
 export const selectUpdateError = (state) => state.trips.updateBudgetError;
+
+// trip delete selectors
+export const selectTripDeleteStatus = (state) => state.trips.tripDeleteStatus;
+export const selectrTripDeleteError = (state) => state.trips.tripDeleteError;
+
+// trip update selectors
+export const selectTripUpdateStatus = (state) => state.trips.tripUpdateStatus;
+export const selectTripUpdateError = (state) => state.trips.tripUpdateError;

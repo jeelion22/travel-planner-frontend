@@ -345,7 +345,7 @@ const Transportation = ({ trip }) => {
                       disabled={flightBookingStatus === "loading"}
                       onClick={() => {
                         handleFlightBooking(flight);
-                        dispatch(getAllTravelBookings(tripId)).unwrap();
+                        dispatch(getAllTravelBookings(tripId));
                       }}
                     >
                       {loadingButtons[flight._id] === true ? (
