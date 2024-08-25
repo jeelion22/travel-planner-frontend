@@ -186,8 +186,7 @@ const Trip = () => {
     return (
       <div className="container">
         <div className="row bg-body-tertiary mt-4 p-2 rounded">
-
-        <div className="col">
+          <div className="col">
             <h4 className="text-center p-2">Trip Detail</h4>
           </div>
           <div className="col-auto p-2">
@@ -196,10 +195,11 @@ const Trip = () => {
               type="button"
               class="btn-close  fs-5"
               aria-label="Close"
-              onClick={()=>{navigate("/dashboard")}}
+              onClick={() => {
+                navigate("/dashboard");
+              }}
             ></button>
           </div>
-         
 
           {/* <div data-bs-theme="dark">
             <button type="button" class="btn-close" aria-label="Close"></button>
@@ -397,13 +397,21 @@ const Trip = () => {
                     </div>
 
                     {allToDoStatus === "loading" && (
-                      <div className=" text-center">
-                        <i class="bi bi-cloud-arrow-down"></i>
-                        <p>No ToDos found!</p>
+                      <div className="container">
+                        <div className="row justify-content-center align-items-center mt-2">
+                          <div className="col text-center">
+                            <FontAwesomeIcon
+                              icon={faSpinner}
+                              spinPulse
+                              className="fs-3"
+                            />
+                            <h6 className="mt-2">Loading...</h6>
+                          </div>
+                        </div>
                       </div>
                     )}
 
-                    {allToDoStatus === "succeeded" ? (
+                    {allToDoStatus === "succeeded" && (
                       <div class="table-responsive">
                         <table class="table">
                           <thead>
@@ -465,7 +473,9 @@ const Trip = () => {
                                               alert(
                                                 "ToDo deleted successfully!"
                                               );
-                                              navigate(0);
+                                              return dispatch(
+                                                getAllToDos(tripId)
+                                              );
                                             })
                                             .catch((err) => alert(err));
                                         }}
@@ -486,7 +496,8 @@ const Trip = () => {
                           </tbody>
                         </table>
                       </div>
-                    ) : (
+                    )}
+                    {allToDoStatus === "failed" && (
                       <div className=" text-center">
                         <i class="bi bi-journal-x fs-1"></i>
                         <p>No ToDos found!</p>

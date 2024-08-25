@@ -80,13 +80,10 @@ const ToDoModal = () => {
                           .unwrap()
                           .then(() => {
                             resetForm();
+                            return dispatch(getAllToDos(tripId));
                           })
                           .catch((err) => alert(err))
                           .finally(() => setSubmitting(false));
-
-                        dispatch(getAllToDos(tripId)).catch((err) =>
-                          alert(err)
-                        );
                       }}
                     >
                       {(formik) => (

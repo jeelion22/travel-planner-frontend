@@ -54,6 +54,7 @@ const ToDoStatusUpdate = ({ toDoId, modalId, initialState }) => {
                     className="btn-close"
                     data-bs-dismiss="modal"
                     aria-label="Close"
+                    disabled={updateStatus === "succeeded"}
                   ></button>
                 </div>
                 <div className="modal-body">
@@ -61,17 +62,16 @@ const ToDoStatusUpdate = ({ toDoId, modalId, initialState }) => {
                     <>
                       <div className="text-center">
                         <div className="text-primary">
-                          <i class="bi bi-check-circle-fill fs-1"></i>
+                          <i className="bi bi-check-circle-fill fs-1"></i>
                           <h6>Success</h6>
                         </div>
-
                         <button
                           type="button"
                           className="btn btn-outline-danger rounded-pill"
                           data-bs-dismiss="modal"
                           onClick={() => {
-                            dispatch(getAllToDos(tripId));
                             dispatch(resetToDoStatusUpdate());
+                            dispatch(getAllToDos(tripId));
                           }}
                         >
                           Close
