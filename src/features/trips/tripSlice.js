@@ -58,6 +58,21 @@ export const getAllTripsByUser = createAsyncThunk(
   }
 );
 
+// search trips for the user who created
+export const searchTrips = createAsyncThunk(
+  "trips/searchTrips",
+  async (tripQuery, { rejectWithValue }) => {
+    try {
+      const response = await protectedInstance.get(
+        `/users/trips/search?trip=${tripQuery}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 // update budget
 export const updateBudget = createAsyncThunk(
   "trips/updateBudget",
@@ -91,7 +106,7 @@ export const deleteTripById = createAsyncThunk(
 // update trip
 export const updateTripById = createAsyncThunk(
   "trips/updateTripById",
-  async ({ tripId, tripData }, {rejectWithValue}) => {
+  async ({ tripId, tripData }, { rejectWithValue }) => {
     try {
       const response = await protectedInstance.put(
         `/users/trips/edit/${tripId}`,
@@ -184,6 +199,19 @@ const tripSlice = createSlice({
       .addCase(updateTripById.rejected, (state, action) => {
         state.tripUpdateStatus = "failed";
         state.tripUpdateError = action.payload;
+      })
+      .addCase(searchTrips.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(searchTrips.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.error = null;
+        state.trips = action.payload;
+      })
+      .addCase(searchTrips.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
       });
   },
 });
