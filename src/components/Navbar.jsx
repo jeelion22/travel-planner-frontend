@@ -13,36 +13,36 @@ const Navbar = ({ redirectTo = "/dashboard" }) => {
 
   return (
     <div>
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a class="navbar-brand">Travel-Planner</a>
+      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+        <div className="container-fluid">
+          <a className="navbar-brand">Travel-Planner</a>
           <button
-            class="navbar-toggler"
+            className="navbar-toggler"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
             aria-expanded="false"
             aria-label="Toggle navigation"
           >
-            <span class="navbar-toggler-icon"></span>
+            <span className="navbar-toggler-icon"></span>
           </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <Link to={"/about"} class="nav-link active" aria-current="page">
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li className="nav-item">
+                <Link to={"/about"} className="nav-link active" aria-current="page">
                   About
                 </Link>
               </li>
 
-              <li class="nav-item">
-                <Link to={"/register"} class="nav-link">
+              <li className="nav-item">
+                <Link to={"/register"} className="nav-link">
                   Register
                 </Link>
               </li>
 
-              <li class="nav-item">
-                <Link to={"/login"} class="nav-link">
+              <li className="nav-item">
+                <Link to={"/login"} className="nav-link">
                   Login
                 </Link>
               </li>
