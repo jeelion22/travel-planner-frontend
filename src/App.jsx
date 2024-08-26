@@ -15,9 +15,9 @@ import RedirectIfLoggedIn from "./components/RedirectIfLoggedIn";
 import AddTrips from "./features/trips/AddTrips";
 import DashboardLayout from "./components/DashboardLayout";
 import Trip from "./features/trips/Trip";
+import Footer from "./components/Footer";
 
 const App = () => {
-  
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -81,6 +81,7 @@ const App = () => {
           element={<RedirectIfLoggedIn redirectPath="/dashboard" />}
         />
       </Routes>
+      <Footer />
     </Router>
   );
 };
