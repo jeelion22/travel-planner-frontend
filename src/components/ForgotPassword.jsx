@@ -1,15 +1,16 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
   forgotPassword,
+  resetPasswordSet,
   selectUserPasswordResetError,
   selectUserPasswordResetStatus,
 } from "../features/users/usersSlice";
 import { Formik, Field, ErrorMessage, Form } from "formik";
 import * as Yup from "yup";
 import { Modal } from "bootstrap";
-import PasswordResetOtp from "../features/users/PasswordResetOtp";
+import PasswordReset from "../features/users/PasswordReset";
 
 const ForgotPassword = () => {
   const userPasswordResetStatus = useSelector(selectUserPasswordResetStatus);
@@ -35,6 +36,10 @@ const ForgotPassword = () => {
     email: Yup.string().email().required("* Email required"),
   });
 
+  useEffect(() => {
+    dispatch(resetPasswordSet());
+  }, [dispatch]);
+
   return (
     <div className="container">
       <div className="row justify-content-center">
@@ -52,7 +57,9 @@ const ForgotPassword = () => {
                   openModal();
                 })
                 .catch((err) => alert(JSON.stringify(err, null, 2)))
-                .finally(() => setSubmitting(false));
+                .finally(() => {
+                  setSubmitting(false);
+                });
             }}
           >
             {(formik) => (
@@ -126,7 +133,7 @@ const ForgotPassword = () => {
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-body">
-              <PasswordResetOtp />
+              <PasswordReset />
             </div>
           </div>
         </div>
