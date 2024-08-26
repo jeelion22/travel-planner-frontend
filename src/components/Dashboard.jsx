@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import getSymbolFromCurrency from "currency-symbol-map";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -8,6 +10,7 @@ import {
   deleteTripById,
   getAllTripsByUser,
   getTripById,
+  searchTrips,
   selectTripError,
   selectTrips,
   selectTripStatus,
@@ -17,6 +20,9 @@ import { getAllToDos } from "../features/toDos/toDoSlice";
 import { getFlightsSuggestions } from "../features/transportation/transportationSlice";
 import AddTrips from "../features/trips/AddTrips";
 import EditTrip from "../features/trips/EditTrip";
+
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 const Dashboard = () => {
   const trips = useSelector(selectTrips);
@@ -117,17 +123,42 @@ const Dashboard = () => {
           </button>
         </div>
         <div className="col">
-          <form class="d-flex" role="search">
-            <input
-              class="form-control me-2"
-              type="search"
-              placeholder="Search Trips"
-              aria-label="Search Trips"
-            />
-            <button class="btn btn-success" type="submit">
-              Search
-            </button>
-          </form>
+          <Formik
+            initialValues={{ search: "" }}
+            validationSchema={Yup.object({
+              search: Yup.string().required("Key words required"),
+            })}
+            onSubmit={(values, { resetForm, setSubmitting }) => {
+              dispatch(searchTrips(values.search))
+                .unwrap()
+                .then(() => resetForm())
+                .catch((err) => console.log(err))
+                .finally(() => setSubmitting(false));
+            }}
+          >
+            {(formik) => (
+              <Form className="d-flex gap-2" role="search">
+                <div className="col">
+                  <Field
+                    type="search"
+                    className={`form-control ${
+                      formik.touched.search
+                        ? formik.errors.search
+                          ? "is-invalid"
+                          : "is-valid"
+                        : ""
+                    }`}
+                    name="search"
+                    placeholder="Search Trips"
+                  />
+                </div>
+
+                <button class="btn btn-success" type="submit">
+                  Search
+                </button>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
 
@@ -140,6 +171,20 @@ const Dashboard = () => {
             <div className="col ">
               <i class="bi bi-rocket fs-1"></i>
               <h5>No trips</h5>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {status === "loading" && (
+        <div className="container">
+          <div
+            className="row justify-content-center align-items-center"
+            style={{ height: "50vh" }}
+          >
+            <div className="col text-center">
+              <FontAwesomeIcon icon={faSpinner} spinPulse size="4x" />
+              <h6 className="mt-4">Loading...</h6>
             </div>
           </div>
         </div>
