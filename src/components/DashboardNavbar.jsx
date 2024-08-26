@@ -12,10 +12,6 @@ import {
 import { useDispatch } from "react-redux";
 
 const DashboardNavbar = () => {
-
-
-
-  
   const user = useSelector(selectUser);
   const status = useSelector(selectUserStatus);
   const message = useSelector(selectUserMessage);
@@ -44,7 +40,19 @@ const DashboardNavbar = () => {
         <Link to="/dashboard" className="navbar-brand">
           Travel-Planner
         </Link>
-        <div className="collapse navbar-collapse">
+
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link className="nav-link">
@@ -53,13 +61,13 @@ const DashboardNavbar = () => {
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link btn btn-link" to={"/dashboard"}>
+              <Link className="nav-link" to={"/dashboard"}>
                 Dashboard
               </Link>
             </li>
 
             <li className="nav-item">
-              <button className="nav-link btn btn-link" onClick={handleLogout}>
+              <button className="nav-link" onClick={handleLogout}>
                 Logout
               </button>
             </li>
