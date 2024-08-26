@@ -108,7 +108,7 @@ export const forgotPassword = createAsyncThunk(
       const response = await instance.post("/users/forgot-password", email);
       return response.data;
     } catch (error) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );

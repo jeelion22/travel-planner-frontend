@@ -1,16 +1,31 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
+  forgotPassword,
   selectUserPasswordResetError,
   selectUserPasswordResetStatus,
 } from "../features/users/usersSlice";
 import { Formik, Field, ErrorMessage, Form } from "formik";
 import * as Yup from "yup";
+import { Modal } from "bootstrap";
+import PasswordResetOtp from "../features/users/PasswordResetOtp";
 
 const ForgotPassword = () => {
   const userPasswordResetStatus = useSelector(selectUserPasswordResetStatus);
   const userPasswordResetError = useSelector(selectUserPasswordResetError);
+
+  const dispatch = useDispatch();
+
+  // modalRef creation
+  const modalRef = useRef(null);
+
+  // open modal programmatically
+  const openModal = () => {
+    const modalElement = modalRef.current;
+    const modal = new Modal(modalElement);
+    modal.show();
+  };
 
   const initialValues = {
     email: "",
@@ -29,7 +44,16 @@ const ForgotPassword = () => {
           <Formik
             initialValues={initialValues}
             validationSchema={emailValidationSchema}
-            onSubmit={() => {}}
+            onSubmit={(values, { resetForm, setSubmitting }) => {
+              dispatch(forgotPassword(values))
+                .unwrap()
+                .then(() => {
+                  resetForm();
+                  openModal();
+                })
+                .catch((err) => alert(JSON.stringify(err, null, 2)))
+                .finally(() => setSubmitting(false));
+            }}
           >
             {(formik) => (
               <Form>
@@ -88,7 +112,26 @@ const ForgotPassword = () => {
           </div>
         </div>
       </div>
-     </div>
+
+      <div
+        class="modal fade"
+        id="staticBackdrop"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+        ref={modalRef}
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <PasswordResetOtp />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
