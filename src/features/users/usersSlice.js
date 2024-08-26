@@ -35,7 +35,7 @@ const initialState = {
   userPasswordResetOtpStatus: "idle",
   userPasswordResetOtpError: null,
 
-  // user password set
+  // user password reset
   userPasswordSetStatus: "idle",
   userPasswordSetError: null,
 };
@@ -113,12 +113,29 @@ export const forgotPassword = createAsyncThunk(
   }
 );
 
+// user password setting
+export const resetPassword = createAsyncThunk(
+  "users/resetPassword",
+  async (resetData, { rejectWithValue }) => {
+    try {
+      const response = await instance.put("/users/password/reset", resetData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
     clearMessage(state) {
       state.message = null;
+    },
+    resetPasswordSet(state) {
+      state.userPasswordSetStatus = "idle";
+      state.userPasswordSetError = null;
     },
   },
   extraReducers: (builder) => {
@@ -207,12 +224,24 @@ const userSlice = createSlice({
       .addCase(forgotPassword.rejected, (state, action) => {
         state.userPasswordResetStatus = "failed";
         state.userPasswordResetError = action.payload;
+      })
+      .addCase(resetPassword.pending, (state) => {
+        state.userPasswordSetStatus = "loading";
+        state.userPasswordSetError = null;
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.userPasswordSetStatus = "succeeded";
+        state.userPasswordSetError = null;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.userPasswordSetStatus = "failed";
+        state.userPasswordSetError = action.payload;
       });
   },
 });
 
 export default userSlice.reducer;
-export const { clearMessage } = userSlice.actions;
+export const { clearMessage, resetPasswordSet } = userSlice.actions;
 
 export const selectUserStatus = (state) => state.users.status;
 export const selectUserError = (state) => state.users.error;
@@ -247,3 +276,9 @@ export const selectUserPasswordResetStatus = (state) =>
   state.users.userPasswordResetStatus;
 export const selectUserPasswordResetError = (state) =>
   state.users.userPasswordResetError;
+
+// user password reset selectors
+export const selectUserPasswordSetStatus = (state) =>
+  state.users.userPasswordSetStatus;
+export const selectUserPasswordSetError = (state) =>
+  state.users.userPasswordSetError;
