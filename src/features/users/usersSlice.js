@@ -71,7 +71,7 @@ export const userLogin = createAsyncThunk(
       const response = await instance.post("/users/login", credentials);
       return response.data;
     } catch (error) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
