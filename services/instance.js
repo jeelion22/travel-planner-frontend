@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "https://travel-planner-backend-hmgj.onrender.com/api";
+const baseURL = "https://travel-planner-backend-z03r.onrender.com/api";
 
 const instance = axios.create({
   baseURL,
