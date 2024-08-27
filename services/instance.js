@@ -1,10 +1,9 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:5001/api";
+const baseURL = "https://travel-planner-backend-hmgj.onrender.com/api";
 
 const instance = axios.create({
   baseURL,
-  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
