@@ -71,7 +71,7 @@ export const userLogin = createAsyncThunk(
       const response = await instance.post("/users/login", credentials);
       return response.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(err.response?.data?.message);
     }
   }
 );
@@ -83,7 +83,7 @@ export const getUser = createAsyncThunk(
       const response = await protectedInstance.get("/users/me");
       return response.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(err.response?.data?.message);
     }
   }
 );
