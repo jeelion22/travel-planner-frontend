@@ -73,7 +73,7 @@ const Login = () => {
                   } else navigate("/login");
                 })
                 .catch((err) => {
-                  console.log(err);
+                  alert(JSON.stringify(err, null, 2));
                 })
 
                 .finally(() => {

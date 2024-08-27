@@ -71,13 +71,7 @@ export const userLogin = createAsyncThunk(
       const response = await instance.post("/users/login", credentials);
       return response.data;
     } catch (error) {
-      // Check if error.response is defined
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        // Handle other unexpected errors
-        return rejectWithValue("An unexpected error occurred");
-      }
+      return rejectWithValue(err.response.data.message);
     }
   }
 );
