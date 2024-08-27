@@ -70,8 +70,8 @@ export const userLogin = createAsyncThunk(
     try {
       const response = await instance.post("/users/login", credentials);
       return response.data;
-    } catch (err) {
-      return rejectWithValue(err.response?.data?.message);
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
