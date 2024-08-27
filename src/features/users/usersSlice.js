@@ -82,7 +82,6 @@ export const userLogin = createAsyncThunk(
   }
 );
 
-
 export const getUser = createAsyncThunk(
   "users/getUser",
   async (_, { rejectWithValue }) => {
@@ -90,7 +89,9 @@ export const getUser = createAsyncThunk(
       const response = await protectedInstance.get("/users/me");
       return response.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || "Error for getting user");
+      return rejectWithValue(
+        err.response?.data?.message || "Error for getting user"
+      );
     }
   }
 );
@@ -174,7 +175,6 @@ const userSlice = createSlice({
         state.userEmailVerificationStatus = "failed";
         state.userEmailVerificationError = action.payload;
       })
-      // user login case
       .addCase(userLogin.pending, (state, action) => {
         state.userLoginStatus = "loading";
         state.userLoginError = null;
@@ -183,7 +183,6 @@ const userSlice = createSlice({
         if (action.payload.userId) {
           state.userId = action.payload.userId;
         } else {
-          // for the case of verified email
           state.userLoginStatus = "succeeded";
           state.user = action.payload;
           state.userLoginError = null;
