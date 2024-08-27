@@ -65,6 +65,7 @@ const Login = () => {
               dispatch(userLogin(values))
                 .unwrap()
                 .then((res) => {
+                  resetForm();
                   if (res?.userId) {
                     openModal();
                   } else if (res.token) {
@@ -74,7 +75,6 @@ const Login = () => {
                 .catch((err) => alert(err))
 
                 .finally(() => {
-                  resetForm();
                   setSubmitting(false);
                 });
             }}
