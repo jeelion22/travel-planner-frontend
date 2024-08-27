@@ -72,7 +72,9 @@ const Login = () => {
                     navigate("/dashboard");
                   } else navigate("/login");
                 })
-                .catch((err) => alert(err))
+                .catch((err) => {
+                  console.log(err);
+                })
 
                 .finally(() => {
                   setSubmitting(false);
