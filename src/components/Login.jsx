@@ -57,7 +57,7 @@ const Login = () => {
   return (
     <div className="container">
       <div className="row justify-content-center">
-        <div className="col-md-6">
+        <div className="col-md-6 col-sm-12">
           <Formik
             initialValues={initialValues}
             validationSchema={userLoginValidationSchema}
@@ -84,9 +84,16 @@ const Login = () => {
             {(formik) => (
               <Form
                 onSubmit={formik.handleSubmit}
-                className="border rounded m-4 p-4 bg-body-tertiary"
+                className="border rounded m-4 p-4 bg-body-tertiary shadow"
               >
-                <h3 className="text-center p-4">Login</h3>
+                <div className="text-center">
+                  <i
+                    class="bi bi-person-circle text"
+                    style={{ fontSize: "50px" }}
+                  ></i>
+                </div>
+
+                <h3 className="text-center p-2">Login</h3>
 
                 <div className="row ">
                   <div className="col">
@@ -149,7 +156,7 @@ const Login = () => {
                 <div className="text-end">
                   <button
                     type="submit"
-                    class="btn btn-outline-primary mt-3"
+                    class="btn btn-outline-primary mt-3 rounded-pill"
                     disabled={userLoginStatus === "loading"}
                   >
                     {userLoginStatus === "loading" ? (
@@ -173,7 +180,7 @@ const Login = () => {
 
       <div className="row justify-content-center text-center">
         <div className="col-md-6">
-          <div className="border rounded p-4 m-4 bg-body-tertiary">
+          <div className="border rounded p-4 m-4 bg-body-tertiary shadow">
             <div>
               For creating an account?{" "}
               <Link to={"/register"} className="link-primary">
@@ -196,17 +203,6 @@ const Login = () => {
       >
         <div class="modal-dialog">
           <div class="modal-content">
-            {/* <div class="modal-header">
-              <h3 class="modal-title" id="staticBackdropLabel">
-                Verify Email Address
-              </h3>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div> */}
             <div class="modal-body">
               <VerifyEmail />
             </div>

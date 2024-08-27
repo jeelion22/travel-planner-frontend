@@ -30,7 +30,11 @@ const Navbar = ({ redirectTo = "/dashboard" }) => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <Link to={"/about"} className="nav-link active" aria-current="page">
+                <Link
+                  to={"/about"}
+                  className="nav-link active"
+                  aria-current="page"
+                >
                   About
                 </Link>
               </li>

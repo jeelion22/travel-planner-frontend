@@ -111,7 +111,10 @@ const Dashboard = () => {
 
   return (
     <div className="container">
-      <div className="row justify-content-center mt-4 pb-4 border-bottom">
+      <div
+        className="row justify-content-center mt-4 pb-4 "
+        style={{ borderBottom: "solid 2px", borderColor: "white" }}
+      >
         <div className="col">
           <button
             className="btn btn-success"

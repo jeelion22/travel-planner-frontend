@@ -16,7 +16,7 @@ import AddTrips from "./features/trips/AddTrips";
 import DashboardLayout from "./components/DashboardLayout";
 import Trip from "./features/trips/Trip";
 import Footer from "./components/Footer";
-
+import HomePage from "./components/HomePage";
 const App = () => {
   const dispatch = useDispatch();
 
@@ -29,6 +29,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Navbar />}>
           <Route>
+            <Route path="/" element={<HomePage />} />
             <Route path="about" element={<About />} />
             <Route path="register" element={<Register />} />
             <Route path="login" element={<Login />} />

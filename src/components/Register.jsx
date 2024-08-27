@@ -54,9 +54,12 @@ const Register = () => {
             {(formik) => (
               <Form
                 onSubmit={formik.handleSubmit}
-                className="border rounded m-4 p-4 bg-body-tertiary "
+                className="border rounded m-4 p-4 bg-body-tertiary shadow "
               >
-                <h3 className="text-center p-4">Register</h3>
+                <div className="text-center" style={{ fontSize: "60px" }}>
+                  <i class="bi bi-person-add"></i>
+                </div>
+                <h3 className="text-center">Register</h3>
 
                 <div className="mb-3">
                   <div className="form-floating mb-3">
@@ -220,14 +223,14 @@ const Register = () => {
         </div>
       </div>
 
-      <div className="row justify-content-center text-center">
-        <div className="col-md-6 ">
-          <div className="border rounded p-4 m-4 bg-body-tertiary">
+      <div className="row justify-content-center text-cente">
+        <div className="col-md-6">
+          <div className="border rounded p-4 m-4 mt-2 bg-body-tertiary shadow">
             <div>
               Already have an account?{" "}
               <Link to={"/login"} className="link-primary">
                 Login
-              </Link>{" "}
+              </Link>
             </div>
           </div>
         </div>
