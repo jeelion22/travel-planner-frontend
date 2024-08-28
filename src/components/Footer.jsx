@@ -7,7 +7,7 @@ const Footer = () => {
     <footer className="bg-body-tertiary text-center py-3 fixed-bottom">
       <div className="container">
         <p className="mb-0">
-          &copy; {year} Travel-Planner. All rights reserved.
+          &copy; {year} Travel-Planner-India. All rights reserved.
         </p>
       </div>
     </footer>

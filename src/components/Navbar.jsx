@@ -15,7 +15,7 @@ const Navbar = ({ redirectTo = "/dashboard" }) => {
     <div>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
-          <a className="navbar-brand">Travel-Planner</a>
+          <a className="navbar-brand">Travel-Planner-India</a>
           <button
             className="navbar-toggler"
             type="button"

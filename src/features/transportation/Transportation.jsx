@@ -256,9 +256,15 @@ const Transportation = ({ trip }) => {
                   </option>
                   <option value={"flight"}>Flight</option>
                   <option value={"train"}>Train</option>
-                  <option value={"bus"}>Bus</option>
-                  <option value={"car rental"}>Car Rental</option>
-                  <option value={"other"}>Other</option>
+                  <option value={"bus"} disabled>
+                    Bus
+                  </option>
+                  <option value={"car rental"} disabled>
+                    Car Rental
+                  </option>
+                  <option value={"other"} disabled>
+                    Other
+                  </option>
                 </Field>
                 <ErrorMessage
                   className="text-danger"

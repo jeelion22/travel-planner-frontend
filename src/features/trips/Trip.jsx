@@ -226,7 +226,8 @@ const Trip = () => {
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary">
-                  Last updated 3 mins ago
+               <p></p>
+                <p className="text-center">– Ibn Battuta</p>
                 </small>
               </div>
             </div>
@@ -245,7 +246,7 @@ const Trip = () => {
                       {" "}
                       <i
                         type="button"
-                        class=" bi bi-pencil-square"
+                        class=" bi bi-pencil-square fs-4"
                         data-bs-toggle="modal"
                         data-bs-target="#editBudgetModal"
                       ></i>
@@ -361,7 +362,8 @@ const Trip = () => {
                   </div>
                   <div class="card-footer">
                     <small class="text-body-secondary">
-                      Last updated 3 mins ago
+                    &#x201F; A budget tells us what we can’t afford, but it doesn’t keep us from buying it. &#x201F;
+                    <p className="text-end" >- Filliam Feather</p>
                     </small>
                   </div>
                 </div>
@@ -377,7 +379,7 @@ const Trip = () => {
                       {" "}
                       <i
                         type="button"
-                        class=" bi bi-journal-plus fs-3"
+                        class=" bi bi-journal-plus fs-4"
                         data-bs-toggle="modal"
                         data-bs-target="#addToDoModal"
                         onClick={() => {
@@ -496,7 +498,8 @@ const Trip = () => {
                   </div>
                   <div class="card-footer">
                     <small class="text-body-secondary">
-                      Last updated 3 mins ago
+                    'Rename your “To-Do” list to your “Opportunities” list. Each day is a treasure chest filled with limitless opportunities; take joy in checking many off your list.'
+                    <p className="text-end">- Steve Maraboli</p>
                     </small>
                   </div>
                 </div>

@@ -52,7 +52,7 @@ const AddTrips = () => {
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-10">
-          <nav className="navbar bg-body-tertiary mt-4 rounded p-3">
+          <nav className="navbar bg-body-tertiary mt-4 rounded p-3 mb-4">
             <form className="col d-flex" role="search">
               <input
                 className="form-control me-2"
@@ -89,7 +89,7 @@ const AddTrips = () => {
             <div className="col-md-10">
               <Form
                 onSubmit={formik.handleSubmit}
-                className="rounded mt-3 p-4 bg-body-tertiary"
+                className="rounded mt-4 p-4 bg-body-tertiary"
               >
                 <h3 className="text-center pb-3">Add Trip</h3>
 
