@@ -1,4 +1,4 @@
-# ReUniteME (Frontend)
+# Travel-Planner-India (Frontend)
 
 Travel-Planner-India is an application for planning trips to India for touring.
 
@@ -41,7 +41,7 @@ Users are capable of make a complete CRUD operations on their trips
 
 ## Application Link
 
-[ReUniteME](https://travel-planner-india.netlify.app/)
+[Travel Planner](https://travel-planner-india.netlify.app/)
 
 ## Application Images
 
