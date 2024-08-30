@@ -10,6 +10,8 @@ import {
   selectAllTravelBooking,
   selectAllTravelBookingError,
   selectAllTravelBookingStatus,
+  selectFlightBookingStatus,
+  selectTrainBookingStatus,
 } from "./transportationSlice";
 import { selectAllToDosStatus } from "../toDos/toDoSlice";
 import getSymbolFromCurrency from "currency-symbol-map";
@@ -24,6 +26,11 @@ const TravelBooking = ({ tripId }) => {
   const flightsBooked = allTravelBooking?.flightsBooked;
   const trainsBooked = allTravelBooking?.trainsBooked;
   const carsBooked = allTravelBooking?.carsBooked;
+
+  // flight booking status
+  const flightBookingStatus = useSelector(selectFlightBookingStatus);
+  // train booking status
+  const trainBookingStatus = useSelector(selectTrainBookingStatus);
 
   // booking cancel
   const [cancelingBtn, setCancelingBtn] = useState({});
@@ -65,7 +72,7 @@ const TravelBooking = ({ tripId }) => {
       .unwrap()
       .catch((err) => alert(err));
     // dispatch(resetGetAllTravelBookings());
-  }, [dispatch, tripId, bookFlight, bookAccommodation]);
+  }, [dispatch, tripId, flightBookingStatus, trainBookingStatus]);
 
   if (!allTravelBooking) {
     return (
