@@ -52,7 +52,7 @@ const AddTrips = () => {
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-10">
-          <nav className="navbar bg-body-tertiary mt-4 rounded p-3 mb-4">
+          <nav className="navbar bg-body-tertiary mt-4 rounded p-3 ">
             <form className="col d-flex" role="search">
               <input
                 className="form-control me-2"
@@ -91,7 +91,7 @@ const AddTrips = () => {
                 onSubmit={formik.handleSubmit}
                 className="rounded mt-4 p-4 bg-body-tertiary"
               >
-                <h3 className="text-center pb-3">Add Trip</h3>
+                <h3 className="text-center pb-2">Add Trip</h3>
 
                 <div className="row">
                   <h6>Trip info</h6>
@@ -198,7 +198,7 @@ const AddTrips = () => {
                 <div className="row">
                   <h6>Budget</h6>
 
-                  <div className="col">
+                  <div className=" col-sm-12 col-md-2">
                     <div className="form-floating mb-3">
                       <Field
                         as="select"
@@ -221,7 +221,7 @@ const AddTrips = () => {
                       <label htmlFor="budget.currency">Currency</label>
                     </div>
                   </div>
-                  <div className="col">
+                  <div className="col-sm-12 col-md-2">
                     <div className="form-floating mb-3">
                       <Field
                         type="number"
@@ -246,7 +246,7 @@ const AddTrips = () => {
                       />
                     </div>
                   </div>
-                  <div className="col">
+                  <div className="col-sm-12 col-md-2">
                     <div className="form-floating mb-3">
                       <Field
                         type="number"
@@ -272,7 +272,7 @@ const AddTrips = () => {
                     </div>
                   </div>
 
-                  <div className="col">
+                  <div className="col-sm-12 col-md-2">
                     <div className="form-floating mb-3">
                       <Field
                         type="number"
@@ -295,7 +295,7 @@ const AddTrips = () => {
                       />
                     </div>
                   </div>
-                  <div className="col">
+                  <div className="col-sm-12 col-md-2">
                     <div className="form-floating mb-3">
                       <Field
                         type="number"
@@ -320,7 +320,7 @@ const AddTrips = () => {
                   </div>
                 </div>
 
-                <div className="text-end">
+                <div className="text-center">
                   <button
                     type="submit"
                     className="btn btn-outline-success rounded-pill mt-3"
