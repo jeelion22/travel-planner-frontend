@@ -151,7 +151,7 @@ const TravelBooking = ({ tripId }) => {
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">F.No.</th>
-                    <th scope="col">Airline/train</th>
+                    <th scope="col">Airline</th>
                     <th scope="col">Source</th>
                     <th scope="col">Destination</th>
                     <th scope="col">Dep.Time</th>
