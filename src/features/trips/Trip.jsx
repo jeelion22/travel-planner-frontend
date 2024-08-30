@@ -221,13 +221,16 @@ const Trip = () => {
                     day: "numeric",
                   })}
                 </p>
+                {/* booked transportation and accommmodation */}
                 <TravelBooking tripId={tripId} />
                 <BookedAccommodations tripId={tripId} />
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary">
-               <p></p>
-                <p className="text-center">– Ibn Battuta</p>
+                  <p></p>
+                  'Traveling—it leaves you speechless, then turns you into a
+                  storyteller.'
+                  <p className="text-end">– Ibn Battuta</p>
                 </small>
               </div>
             </div>
@@ -362,8 +365,9 @@ const Trip = () => {
                   </div>
                   <div class="card-footer">
                     <small class="text-body-secondary">
-                    &#x201F; A budget tells us what we can’t afford, but it doesn’t keep us from buying it. &#x201F;
-                    <p className="text-end" >- Filliam Feather</p>
+                      &#x201F; A budget tells us what we can’t afford, but it
+                      doesn’t keep us from buying it. &#x201F;
+                      <p className="text-end">- Filliam Feather</p>
                     </small>
                   </div>
                 </div>
@@ -498,8 +502,10 @@ const Trip = () => {
                   </div>
                   <div class="card-footer">
                     <small class="text-body-secondary">
-                    'Rename your “To-Do” list to your “Opportunities” list. Each day is a treasure chest filled with limitless opportunities; take joy in checking many off your list.'
-                    <p className="text-end">- Steve Maraboli</p>
+                      'Rename your “To-Do” list to your “Opportunities” list.
+                      Each day is a treasure chest filled with limitless
+                      opportunities; take joy in checking many off your list.'
+                      <p className="text-end">- Steve Maraboli</p>
                     </small>
                   </div>
                 </div>
