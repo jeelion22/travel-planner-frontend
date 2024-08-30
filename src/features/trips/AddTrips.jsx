@@ -85,7 +85,7 @@ const AddTrips = () => {
         }}
       >
         {(formik) => (
-          <div className="row justify-content-center">
+          <div className="row justify-content-center" style={{marginBottom: "100px"}}>
             <div className="col-md-10">
               <Form
                 onSubmit={formik.handleSubmit}
