@@ -1,5 +1,5 @@
 import React from "react";
-
+import "../styles/HomePage.css"
 import india_places from "../assets/india_places.jpg";
 import coorg_karnataka from "../assets/coorg_karnataka.jpg";
 import dal_lake from "../assets/dal_lake.jpg";
@@ -177,7 +177,7 @@ const HomePage = () => {
                   src={transportation_accommodation}
                   class="card-img-top"
                   alt="Transportation Accommodation"
-                  style={cardImageStyle}
+                  style={{...cardImageStyle, height: 230}}
                 />
                 <div class="card-body text-center">
                   <h5 class="card-title ">
@@ -193,12 +193,14 @@ const HomePage = () => {
               </div>
             </div>
             <div class="col">
-              <div class="card h-100">
+              <div class="card h-100 ">
                 <img
                   src={travel_budget_todo}
-                  class="card-img-top img-fluid"
-                  alt="Budget andd ToDo"
-                 style={{height: "75%"}}
+                  class="card-img-top "
+                  alt="Budget and ToDo"
+
+                  style={{height: 200, width: 250 , objectFit: "cover", display: "block", margin: "0 auto", marginTop: 5}}
+               
                 />
                 <div class="card-body text-center">
                   <h5 class="card-title">Travel Budgeting & ToDos</h5>
