@@ -1,0 +1,17 @@
+div > .card {
+    transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+div > .card:hover {
+    transform: scale(1.05);
+}
+
+
+.row:last-child .card img {
+    /* width: 75%; */
+    width: 100%;
+    height: auto;
+   
+    
+
+}
