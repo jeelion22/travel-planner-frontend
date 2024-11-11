@@ -5,7 +5,7 @@
 
 .homepage-cards .card {
     background-color: rgb(255, 255, 255, 0.1);
-    border: none;
+    border: 0.1rem solid rgb(255, 255, 255, 0.5) ;
 }
 
 .homepage-cards .card img {
@@ -16,8 +16,8 @@
 
 
 .homepage-cards  .card:hover {
-    transform: scale(1.05);
-    transition: 0.2s;
+    transform: scale(0.9);
+    transition: 0.3s;
     background-color: rgb(255, 255, 255, 0.2);
     border-left: 2px solid rgb(255, 255, 255, 0.3);
     border-bottom: 2px solid rgb(255, 255, 255, 0.3);
