@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/HomePage.css"
+import "../styles/HomePage.css";
 import india_places from "../assets/india_places.jpg";
 import coorg_karnataka from "../assets/coorg_karnataka.jpg";
 import dal_lake from "../assets/dal_lake.jpg";
@@ -8,6 +8,9 @@ import more from "../assets/more.jpg";
 import travel_plan from "../assets/travel_plan.jpg";
 import transportation_accommodation from "../assets/transportation_accommodation.avif";
 import travel_budget_todo from "../assets/travel_budget_todo.avif";
+import travel_planing from "../assets/travel-planing.png";
+import transportation_booking from "../assets/transportation_booking.png";
+import budgeting from "../assets/budgeting.png";
 
 const HomePage = () => {
   const imageStyle = {
@@ -15,10 +18,10 @@ const HomePage = () => {
     objectFit: "cover",
   };
 
-  const cardImageStyle = {
-    height: "200px",
-    objectFit: "cover",
-  };
+  // const cardImageStyle = {
+  //   height: "200px",
+  //   objectFit: "cover",
+  // };
 
   return (
     <div className="container p-4 mb-4">
@@ -152,16 +155,16 @@ const HomePage = () => {
 
       {/* app  */}
 
-      <div className="row mt-4 mb-4">
+      <div className="row mt-4 mb-4 homepage-cards">
         <div className="col">
           <div class="row row-cols-1 row-cols-md-3 g-4">
             <div class="col">
               <div class="card h-100">
                 <img
-                  src={travel_plan}
+                  src={travel_planing}
                   class="card-img-top img-fluid"
                   alt="Travel Plan"
-                  style={cardImageStyle}
+                  // style={cardImageStyle}
                 />
                 <div class="card-body">
                   <h5 class="card-title text-center">Plan Your Trip</h5>
@@ -174,10 +177,10 @@ const HomePage = () => {
             <div class="col">
               <div class="card h-100">
                 <img
-                  src={transportation_accommodation}
+                  src={transportation_booking}
                   class="card-img-top"
                   alt="Transportation Accommodation"
-                  style={{...cardImageStyle, height: 230}}
+                  // style={{ ...cardImageStyle, height: 230 }}
                 />
                 <div class="card-body text-center">
                   <h5 class="card-title ">
@@ -186,7 +189,6 @@ const HomePage = () => {
                   <p class="card-text ">
                     Spot travel options and accommodations nearest to your
                     touring places.
-
                   </p>
                   <p className="card-text">* Limitted to Planes and Trains</p>
                 </div>
@@ -195,12 +197,17 @@ const HomePage = () => {
             <div class="col">
               <div class="card h-100 ">
                 <img
-                  src={travel_budget_todo}
+                  src={budgeting}
                   class="card-img-top "
                   alt="Budget and ToDo"
-
-                  style={{height: 200, width: 250 , objectFit: "cover", display: "block", margin: "0 auto", marginTop: 5}}
-               
+                  // style={{
+                  //   height: 200,
+                  //   width: 250,
+                  //   objectFit: "cover",
+                  //   display: "block",
+                  //   margin: "0 auto",
+                  //   marginTop: 5,
+                  // }}
                 />
                 <div class="card-body text-center">
                   <h5 class="card-title">Travel Budgeting & ToDos</h5>
