@@ -1,17 +1,25 @@
-div > .card {
+/* div > .card {
     transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+} */
+
+
+.homepage-cards .card {
+    background-color: rgb(255, 255, 255, 0.1);
+    border: none;
 }
 
-div > .card:hover {
+.homepage-cards .card img {
+    height: 16rem;
+    object-fit:contain;
+}
+
+
+
+.homepage-cards  .card:hover {
     transform: scale(1.05);
-}
-
-
-.row:last-child .card img {
-    /* width: 75%; */
-    width: 100%;
-    height: auto;
-   
-    
-
+    transition: 0.2s;
+    background-color: rgb(255, 255, 255, 0.2);
+    border-left: 2px solid rgb(255, 255, 255, 0.3);
+    border-bottom: 2px solid rgb(255, 255, 255, 0.3);
+    box-shadow: -5px 5px 10px rgb(0, 0, 0, 0.1);
 }
